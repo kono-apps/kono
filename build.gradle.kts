@@ -1,10 +1,11 @@
 plugins {
     kotlin("jvm") version "1.8.21"
+     kotlin("plugin.serialization") version "1.8.21"
     application
 }
 
-group = "revxrsal"
-version = "1.0-SNAPSHOT"
+group = "kono"
+version = "0.1"
 
 repositories {
     mavenCentral()
@@ -12,8 +13,8 @@ repositories {
 }
 
 dependencies {
-    implementation("com.github.winterreisender:webviewko-jvm:0.6.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
     testImplementation(kotlin("test"))
 }
 
