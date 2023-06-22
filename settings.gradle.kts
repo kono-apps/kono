@@ -1,2 +1,15 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        mavenCentral()
+    }
+}
+
 rootProject.name = "kono"
-include("runtime")
+
+include(
+    "annotations",
+    "app",
+    "codegen",
+    "runtime"
+)

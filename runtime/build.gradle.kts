@@ -1,11 +1,11 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.8.21"
+    kotlin("jvm")
 }
 
 group = "kono"
-version = "1.0"
+version = "0.1"
 
 repositories {
     mavenCentral()
