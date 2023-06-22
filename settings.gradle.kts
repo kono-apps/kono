@@ -1,1 +1,2 @@
- rootProject.name = "kono"
+rootProject.name = "kono"
+include("runtime")
