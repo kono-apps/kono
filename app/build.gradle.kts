@@ -12,6 +12,7 @@ group = "kono"
 version = "0.1"
 
 kono {
+    mainClass = "kono.MainKt"
 }
 
 repositories {
