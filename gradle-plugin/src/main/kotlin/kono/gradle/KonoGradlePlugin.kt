@@ -6,25 +6,25 @@ import com.google.devtools.ksp.gradle.KspGradleSubplugin
 import org.gradle.api.Action
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.plugins.ExtensionAware
 
-interface KonoPluginExtensions {
+interface KonoPluginExtension {
+    var mainClass: String
 
 }
 
 const val KSP_PLUGIN = "com.google.devtools.ksp"
 const val SHADOW_PLUGIN = "com.github.johnrengelman.shadow"
 
-val Project.kono: Any get() = extensions.getByName("kono")
+val Project.kono: KonoPluginExtension get() = extensions.getByName("kono") as KonoPluginExtension
 
-fun Project.kono(configure: Action<KonoPluginExtensions>) {
-    project.extensions.configure("kotlin", configure)
+fun Project.kono(configure: Action<KonoPluginExtension>) {
+    project.extensions.configure("kono", configure)
 }
 
 class KonoGradlePlugin : Plugin<Project> {
 
     override fun apply(project: Project) {
-        project.extensions.create("kono", KonoPluginExtensions::class.java)
+        project.extensions.create("kono", KonoPluginExtension::class.java)
         if (!project.pluginManager.hasPlugin(KSP_PLUGIN)) {
             project.pluginManager.apply(KspGradleSubplugin::class.java)
             println("Adding KSP plugin")
