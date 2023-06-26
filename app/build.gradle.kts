@@ -12,7 +12,6 @@ group = "kono"
 version = "0.1"
 
 kono {
-    println("HELL!!")
 }
 
 repositories {
