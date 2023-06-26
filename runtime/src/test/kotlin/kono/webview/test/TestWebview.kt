@@ -19,7 +19,7 @@ val HTML = """
 
 val Assets = mapOf(
     "/" to Asset(
-        "text/html",
+        "ztext/html",
         HTML
     )
 )

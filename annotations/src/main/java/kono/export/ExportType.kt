@@ -1,5 +1,5 @@
-package kono.codegen
+package kono.export
 
 @Target(AnnotationTarget.FUNCTION)
-@Retention(AnnotationRetention.RUNTIME)
+@Retention(AnnotationRetention.BINARY)
 annotation class ExportType

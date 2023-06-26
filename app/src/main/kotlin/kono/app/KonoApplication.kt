@@ -1,9 +1,5 @@
 package kono.app
 
-class KonoApplication {
+import kono.KonoApplicationContext
 
-    fun start() {
-
-    }
-
-}
+class KonoApplication(val context: KonoApplicationContext)

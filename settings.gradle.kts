@@ -2,6 +2,7 @@ pluginManagement {
     repositories {
         gradlePluginPortal()
         mavenCentral()
+        maven { url = uri("repos/maven-repo")}
     }
 }
 
@@ -11,5 +12,6 @@ include(
     "annotations",
     "app",
     "codegen",
-    "runtime"
+    "runtime",
+    "gradle-plugin"
 )
