@@ -1,14 +1,11 @@
 package kono
 
+import kono.assets.AssetHandler
 import kono.config.KonoConfig
-import kono.events.EventHandler
 import kono.fns.FunctionHandler
 
-class KonoApplicationContext(
+interface KonoApplicationContext {
     val config: KonoConfig
-) {
-
-    val assets = AssetHandler()
-    val events = EventHandler()
-
+    val functions: FunctionHandler
+    val assets: AssetHandler
 }

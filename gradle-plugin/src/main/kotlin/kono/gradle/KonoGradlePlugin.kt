@@ -1,15 +1,18 @@
 package kono.gradle
 
 import com.github.jengelman.gradle.plugins.shadow.ShadowPlugin
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import com.google.devtools.ksp.gradle.KspExtension
 import com.google.devtools.ksp.gradle.KspGradleSubplugin
 import org.gradle.api.Action
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.plugins.JavaPluginConvention
+import org.gradle.api.plugins.JavaPluginExtension
 
 interface KonoPluginExtension {
     var mainClass: String
-
+    var config: String?
 }
 
 const val KSP_PLUGIN = "com.google.devtools.ksp"
@@ -41,7 +44,13 @@ class KonoGradlePlugin : Plugin<Project> {
         project.addKonoDependencies()
         project.addMoshiDependencies()
         project.extensions.getByType(KspExtension::class.java).apply {
-            arg("projectDir", project.projectDir.absolutePath)
+            arg("kono:projectDir", project.rootProject.projectDir.absolutePath)
+        }
+
+        project.extensions.getByType(JavaPluginExtension::class.java).apply {
+            sourceSets.named("main") {
+                it.resources.srcDirs(project.rootProject.projectDir.resolve("dist"))
+            }
         }
     }
 }

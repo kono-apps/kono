@@ -1,33 +1,27 @@
 package kono
 
 import kono.export.ExportFunction
-import kono.fns.FunctionHandler
+import kono.generated.GeneratedAppContext
 import kono.runtime.EventLoop
 import kono.webview.webView
 import kono.window.window
-import org.intellij.lang.annotations.Language
 
 @ExportFunction(name = "HELLO")
 fun reverse(value: String): String {
     return value.reversed()
 }
 
-@Language("JSON")
-const val json = """{
-  "fn": "reverse",
-  "p": [
-  ],
-  "d": {
-  }
-}"""
-
 fun main() {
     val eventLoop = EventLoop()
     val window = window(eventLoop) {
-        title("HELLO Hello!")
+        title("Hello!")
     }
     val webView = webView(window) {
-        html("<p>Hello, Kono!</p>")
+        url("kono://localhost/index.html")
+        addCustomProtocol("kono") { path ->
+            GeneratedAppContext.assets.getAsset(path)
+        }
+        devTools(true)
     }
     eventLoop.run {
         println("Window created!")

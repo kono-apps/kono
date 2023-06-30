@@ -13,15 +13,12 @@ val HTML = """
         <title>Hello!!!</title>
     </head>
     <body>
-    <button onclick='window.ipc.postMessage("HELLO!!!")'>Click me!!</button>
+    <button onclick='window.ipc.postMessage("Hello!")'>Click me!!</button>
     </html>
-""".trimIndent()
+""".trimIndent().encodeToByteArray()
 
 val Assets = mapOf(
-    "/" to Asset(
-        "ztext/html",
-        HTML
-    )
+    "/" to Asset("text/html") { HTML }
 )
 
 fun main() {
@@ -39,10 +36,9 @@ fun main() {
             println(message)
         }
         devTools(true)
-        addInitializationScript("console.log('HHello!!')")
+        addInitializationScript("console.log('Hello!!')")
     }
     eventLoop.run {
         println("WebView opened!")
     }
-    println("A")
 }

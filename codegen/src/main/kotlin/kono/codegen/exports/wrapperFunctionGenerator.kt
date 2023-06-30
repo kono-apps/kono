@@ -3,6 +3,7 @@ package kono.codegen.exports
 import com.google.devtools.ksp.KspExperimental
 import com.google.devtools.ksp.getAnnotationsByType
 import com.google.devtools.ksp.isPublic
+import com.google.devtools.ksp.processing.CodeGenerator
 import com.google.devtools.ksp.processing.KSPLogger
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.symbol.KSFile
@@ -10,6 +11,7 @@ import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ksp.addOriginatingKSFile
 import com.squareup.kotlinpoet.ksp.toTypeName
+import com.squareup.kotlinpoet.ksp.writeTo
 import kono.export.ExportFunction
 import kono.codegen.kpoet.*
 import java.lang.reflect.Method
@@ -23,6 +25,46 @@ private val DefaultConstructorMarkerType = CodeBlock.of("java.lang.Object::class
 
 private val JSON_GENERATE_ADAPTER = annotationBuilder(JSON_CLASS) {
     addMember("generateAdapter = true")
+}
+
+fun parseExportedFunctions(
+    resolver: Resolver,
+    logger: KSPLogger,
+    codeGenerator: CodeGenerator,
+    addOriginatingFiles: (KSFile) -> Unit
+): Map<String, ExportedFunctionData> {
+    val exportedFunctions = resolver.getSymbolsWithAnnotation(ExportFunction::class.java.name)
+    if (exportedFunctions.none())
+        return emptyMap()
+    val allFunctions = mutableMapOf<String, ExportedFunctionData>()
+    val functionsFile = FileSpec
+        .builder("kono.generated", "functions")
+        .addImport(
+            "kono.json",
+            "adapterOf"
+        )
+        .addImport(
+            "kono.json.internal",
+            "InvocationJson",
+            "DEFAULT_CONSTRUCTOR_MARKER"
+        )
+        .addImport("kono.fns", "FunctionInvocationException")
+    // Masks code has been re-adapted from Moshi's codegen
+    for (function in exportedFunctions) {
+        if (function !is KSFunctionDeclaration)
+            continue
+        generateExportedFunction(
+            function = function,
+            resolver = resolver,
+            logger = logger,
+            allFunctions = allFunctions,
+            addContentTo = functionsFile
+        )
+        addOriginatingFiles(function.containingFile!!)
+    }
+    val fileSpec = functionsFile.build()
+    fileSpec.writeTo(codeGenerator, aggregating = true)
+    return allFunctions
 }
 
 @OptIn(KspExperimental::class)
@@ -56,8 +98,8 @@ fun generateExportedFunction(
         jvmName
     )
 
-    if (functionData.packageName == "kono.json.generated")
-        logger.error("'kono.json.generated' is a preserved package name and may not be used.", function)
+    if (functionData.packageName == "kono.generated")
+        logger.error("'kono.generated' is a preserved package name and may not be used.", function)
 
     allFunctions[jsName] = functionData
 

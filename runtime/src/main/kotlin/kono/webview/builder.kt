@@ -65,7 +65,6 @@ class WebViewBuilder(private val window: Window) {
             val asset = handler(path)
             assetPtr = assetPtr.assetSetContent(asset.content, asset.content.size)
             assetPtr = assetPtr.assetSetMimeType(asset.mimeType)
-            assetPtr = assetPtr.assetSetMimeType(asset.mimeType)
             assetPtr
         }
     }

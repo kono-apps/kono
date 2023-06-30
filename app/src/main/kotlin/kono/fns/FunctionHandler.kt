@@ -10,16 +10,17 @@ import okio.Buffer
 
 typealias JsFunction = (Moshi, JsonReader) -> String
 
-val GeneratedFunctionHandler = functionHandler {
-    this["HELLO"] = { m, r -> kono.json.generated.reverse(m, r) }
-}
-
 internal fun functionHandler(functions: MutableMap<String, JsFunction>.() -> Unit): FunctionHandler {
-    val fns = buildMap(functions)
+    val fns = mutableMapOf<String, JsFunction>().also(functions)
     return FunctionHandler(fns)
 }
 
-class FunctionHandler(private val functions: Map<String, JsFunction>) {
+class FunctionHandler(private val functions: MutableMap<String, JsFunction>) {
+
+    fun register(name: String, function: JsFunction) {
+        require(!functions.containsKey(name)) { "Duplicate function names: $name" }
+        functions[name] = function
+    }
 
     fun call(moshi: Moshi, json: String): String {
         val buffer = Buffer()

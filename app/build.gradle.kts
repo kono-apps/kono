@@ -1,10 +1,8 @@
-import kono.gradle.KonoPluginExtensions
-
 plugins {
-    kotlin("jvm")
-//    id("com.google.devtools.ksp")
-//    id("com.github.johnrengelman.shadow") version "7.0.0"
     id("kono.app") version "0.1"
+    kotlin("jvm")
+//    id("com.google.devtools.ksp") version "1.8.0-1.0.9"
+//    id("com.github.johnrengelman.shadow") version "7.0.0"
 //    application
 }
 
@@ -22,21 +20,30 @@ repositories {
 }
 
 dependencies {
-//     Kotlin coroutines
 //    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1")
 //
 //    // Moshi for handling JSON
 //    implementation("com.squareup.moshi:moshi:1.14.0")
 //    ksp("com.squareup.moshi:moshi-kotlin-codegen:1.14.0")
+//
+//    implementation(project(":runtime"))
+//    compileOnly(project(":annotations"))
+//    ksp(project(":codegen"))
+}
+
+application {
+    mainClass.set("kono.MainKt")
 }
 
 kotlin {
     jvmToolchain(11)
 }
 
-application {
-    mainClass.set("kono.MainKt")
-}
+//sourceSets {
+//    getByName("main") {
+//        resources.srcDirs(rootProject.projectDir.resolve("dist"))
+//    }
+//}
 
 // Makes generated code visible to IDE
 kotlin {

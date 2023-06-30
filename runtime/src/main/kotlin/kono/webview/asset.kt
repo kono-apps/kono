@@ -6,17 +6,8 @@ package kono.webview
  */
 class Asset(
     val mimeType: String,
-    content: ByteArray,
-    private val compression: AssetCompression = NoCompression
+    content: () -> ByteArray,
 ) {
 
-    constructor(mimeType: String, content: String) : this(
-        mimeType = mimeType,
-        content = content.toByteArray(),
-        compression = NoCompression
-    )
-
-    val content by lazy {
-        compression.decompress(content)
-    }
+    val content by lazy { content() }
 }
