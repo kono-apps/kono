@@ -18,6 +18,7 @@ data class WindowConfig(
     val title: String,
     val fullScreen: Boolean = false,
     val resizable: Boolean = true,
+    val maximized: Boolean = true,
     val width: Int = 800,
     val height: Int = 600
 )

@@ -28,6 +28,7 @@ fun generateConfigProperty(config: KonoConfig): PropertySpec {
                     title = %S,
                     fullScreen = %L,
                     resizable = %L,
+                    maximized = %L,
                     width = %L,
                     height = %L
                 )
@@ -45,6 +46,7 @@ fun generateConfigProperty(config: KonoConfig): PropertySpec {
                 config.window.title,
                 config.window.fullScreen,
                 config.window.resizable,
+                config.window.maximized,
                 config.window.width,
                 config.window.height,
             )
