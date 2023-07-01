@@ -12,6 +12,7 @@ fun reverse(value: String): String {
 }
 
 fun main() {
+    val assets = GeneratedAppContext.assets
     val eventLoop = EventLoop()
     val window = window(eventLoop) {
         title("Hello!")
@@ -20,9 +21,9 @@ fun main() {
         url("kono://localhost/")
         addCustomProtocol("kono") { path ->
             if (path == "/")
-                GeneratedAppContext.assets.getAsset("/index.html")
+                assets.getAsset("/index.html")
             else
-                GeneratedAppContext.assets.getAsset(path)
+                assets.getAsset(path)
         }
         devTools(true)
     }
