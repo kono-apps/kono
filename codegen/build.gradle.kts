@@ -13,7 +13,7 @@ dependencies {
     implementation("com.google.devtools.ksp:symbol-processing-api:1.8.20-RC-1.0.9")
     implementation("com.akuleshov7:ktoml-core:0.5.0")
     implementation("com.akuleshov7:ktoml-file:0.5.0")
-    implementation(project(":annotations"))
+    implementation(project(":common"))
 }
 
 kotlin {

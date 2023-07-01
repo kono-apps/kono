@@ -16,6 +16,7 @@ fun main() {
     val eventLoop = EventLoop()
     val window = window(eventLoop) {
         title("Hello!")
+        maximized(true)
     }
     webView(window) {
         url("kono://localhost/")

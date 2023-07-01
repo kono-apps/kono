@@ -56,8 +56,8 @@ class KonoGradlePlugin : Plugin<Project> {
 }
 
 fun Project.addKonoDependencies() {
+    dependencies.add("implementation", project.project(":common"))
     dependencies.add("implementation", project.project(":runtime"))
-    dependencies.add("compileOnly", project.project(":annotations"))
     dependencies.add("ksp", project.project(":codegen"))
 }
 

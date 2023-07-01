@@ -1,6 +1,6 @@
 package kono
 
-import kono.assets.AssetHandler
+import kono.asset.AssetHandler
 import kono.config.KonoConfig
 import kono.fns.FunctionHandler
 

@@ -4,12 +4,15 @@ import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.PropertySpec
 import com.squareup.kotlinpoet.buildCodeBlock
+import kono.asset.MimeType
+import kono.asset.toMimeType
 import kono.codegen.config.KonoConfig
 import java.io.File
 import kotlin.io.path.relativeTo
 
-private val AssetsHandlerType = ClassName("kono.assets", "AssetHandler")
+private val AssetsHandlerType = ClassName("kono.asset", "AssetHandler")
 private val AssetType = ClassName("kono.webview", "Asset")
+private val MimeTypeClass = ClassName("kono.asset", "MimeType")
 
 fun generateAssetsProperty(
     baseDir: File,
@@ -20,35 +23,20 @@ fun generateAssetsProperty(
             val assetsDir = File(baseDir, config.build.directory)
             val assetsPath = assetsDir.toPath()
             it.initializer(buildCodeBlock {
-                beginControlFlow("kono.assets.assetHandler")
+                beginControlFlow("kono.asset.assetHandler")
                 for (asset in assetsDir.walkTopDown()) {
                     if (asset.isDirectory) continue
                     val path = '/' + asset.toPath().relativeTo(assetsPath).toString().replace('\\', '/')
-                    val mimeType = when (asset.extension) {
-                        "html" -> "text/html"
-                        "js", "mjs" -> "application/javascript"
-                        "css", "less", "sass", "styl" -> "text/css"
-                        "csv" -> "text/csv"
-                        "mp4", "m4v" -> "video/mp4"
-                        "mp3" -> "audio/mp3"
-                        "svg" -> "image/svg+xml"
-                        "ico" -> "image/vnd.microsoft.icon"
-                        "bin" -> "application/octet-stream"
-                        "rtf" -> "application/rtf"
-                        "json" -> "application/json"
-                        "jsonld" -> "application/ld+json"
-                        "txt" -> "text/plain"
-                        "png" -> "image/png"
-                        else -> "application/octet-stream"
-                    }
+                    val mimeType = MimeType.fromExtension(asset.extension)
 
                     addStatement(
-                        """this[%S] = kono.assets.embeddedAsset(
-                        | mimeType = %S,
+                        """this[%S] = kono.asset.embeddedAsset(
+                        | mimeType = %T.%L,
                         | path = %S,
                         |)""".trimMargin(),
                         path,
-                        mimeType,
+                        MimeTypeClass,
+                        mimeType.name,
                         path,
                     )
                 }

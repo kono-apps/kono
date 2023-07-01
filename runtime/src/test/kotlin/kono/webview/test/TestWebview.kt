@@ -1,5 +1,6 @@
 package kono.webview.test
 
+import kono.asset.MimeType
 import kono.runtime.EventLoop
 import kono.webview.Asset
 import kono.webview.webView
@@ -18,7 +19,7 @@ val HTML = """
 """.trimIndent().encodeToByteArray()
 
 val Assets = mapOf(
-    "/" to Asset("text/html") { HTML }
+    "/" to Asset(MimeType.HTML) { HTML }
 )
 
 fun main() {

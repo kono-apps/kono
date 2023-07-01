@@ -9,9 +9,9 @@ pluginManagement {
 rootProject.name = "kono"
 
 include(
-    "annotations",
     "app",
     "codegen",
     "runtime",
-    "gradle-plugin"
+    "gradle-plugin",
+    "common"
 )

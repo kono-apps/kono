@@ -1,6 +1,7 @@
 package kono.webview
 
 import kono.runtime.nativeRuntime
+import kono.asset.MimeType
 
 /**
  * Represents an asset. This includes anything that is passed to the webview,
@@ -11,7 +12,7 @@ import kono.runtime.nativeRuntime
  * consider using Java's new Cleaner utility to avoid memory leaks
  */
 class Asset(
-    private val mimeType: String,
+    private val mimeType: MimeType,
     getContent: () -> ByteArray,
 ) {
 
@@ -21,7 +22,7 @@ class Asset(
 
     internal val assetPtr by lazy {
         nativeRuntime {
-            createAsset(mimeType, content, content.size)
+            createAsset(mimeType.mimeType, content, content.size)
         }
     }
 }

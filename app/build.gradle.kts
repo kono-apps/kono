@@ -27,7 +27,7 @@ dependencies {
 //    ksp("com.squareup.moshi:moshi-kotlin-codegen:1.14.0")
 //
 //    implementation(project(":runtime"))
-//    compileOnly(project(":annotations"))
+//    compileOnly(project(":common"))
 //    ksp(project(":codegen"))
 }
 
