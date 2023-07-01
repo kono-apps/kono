@@ -23,7 +23,7 @@ fun webView(window: Window, block: WebViewBuilder.() -> Unit): WebView {
  * the [WebViewBuilder.builderPtr]. Any further access to it can lead
  * to errors, therefore a WindowBuilder should not be re-used.
  */
-class WebViewBuilder(private val window: Window) {
+class WebViewBuilder internal constructor(private val window: Window) {
 
     /**
      * This pointer must be updated every time the value change, in
@@ -59,13 +59,9 @@ class WebViewBuilder(private val window: Window) {
      * a handling function.
      */
     fun addCustomProtocol(name: String, handler: (path: String) -> Asset) = update {
-        webViewAddCustomProtocol(name) {
-            var assetPtr = it
-            val path = assetPtr.getAssetPath()
+        webViewAddCustomProtocol(name) { path ->
             val asset = handler(path)
-            assetPtr = assetPtr.assetSetContent(asset.content, asset.content.size)
-            assetPtr = assetPtr.assetSetMimeType(asset.mimeType)
-            assetPtr
+            asset.assetPtr
         }
     }
 
