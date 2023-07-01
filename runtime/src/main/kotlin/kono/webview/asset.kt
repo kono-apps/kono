@@ -1,13 +1,19 @@
 package kono.webview
 
+import kono.runtime.nativeRuntime
+
 /**
- * Represents an asset. This is generated (and compressed, if necessary) by the
- * codegen at compile-time.
+ * Represents an asset. This includes anything that is passed to the webview,
+ * such as HTML, CSS, JS, and any other files.
+ *
+ * Note: This maintains a pointer to an underlying asset.
  */
 class Asset(
-    val mimeType: String,
-    content: () -> ByteArray,
+    private val mimeType: String,
+    getContent: () -> ByteArray,
 ) {
 
-    val content by lazy { content() }
+    private val content by lazy { getContent() }
+
+    val assetPtr by lazy { nativeRuntime { createAsset(mimeType, content, content.size) } }
 }

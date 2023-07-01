@@ -75,17 +75,13 @@ interface NativeRuntime : Library {
 
     fun EventLoopPtr.eventLoopRun(onInit: InitCallback)
 
-    fun AssetPtr.assetSetContent(content: ByteArray, length: Int): AssetPtr
-
-    fun AssetPtr.assetSetMimeType(mimeType: String): AssetPtr
-
-    fun AssetPtr.getAssetPath(): String
+    fun createAsset(mimeType: String, content: ByteArray, contentLen: Int): AssetPtr
 
 }
 
 @Suppress("unused") // actually used by JNA
 fun interface CustomProtocolCallback : Callback {
-    fun apply(assetPtr: AssetPtr): AssetPtr
+    fun apply(path: String): AssetPtr
 }
 
 @Suppress("unused") // actually used by JNA

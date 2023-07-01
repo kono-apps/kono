@@ -16,10 +16,13 @@ fun main() {
     val window = window(eventLoop) {
         title("Hello!")
     }
-    val webView = webView(window) {
-        url("kono://localhost/index.html")
+    webView(window) {
+        url("kono://localhost/")
         addCustomProtocol("kono") { path ->
-            GeneratedAppContext.assets.getAsset(path)
+            if (path == "/")
+                GeneratedAppContext.assets.getAsset("/index.html")
+            else
+                GeneratedAppContext.assets.getAsset(path)
         }
         devTools(true)
     }
