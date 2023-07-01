@@ -26,7 +26,7 @@ fun generateAssetsProperty(
                     val path = '/' + asset.toPath().relativeTo(assetsPath).toString().replace('\\', '/')
                     val mimeType = when (asset.extension) {
                         "html" -> "text/html"
-                        "js", "mjs" -> "text/js"
+                        "js", "mjs" -> "application/javascript"
                         "css", "less", "sass", "styl" -> "text/css"
                         "csv" -> "text/csv"
                         "mp4", "m4v" -> "video/mp4"
