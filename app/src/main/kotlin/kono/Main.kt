@@ -6,7 +6,7 @@ import kono.runtime.EventLoop
 import kono.webview.webView
 import kono.window.window
 
-@ExportFunction(name = "HELLO")
+@ExportFunction
 fun reverse(value: String): String {
     return value.reversed()
 }
@@ -17,6 +17,8 @@ fun main() {
     val window = window(eventLoop) {
         title("Hello!")
         maximized(true)
+        maximizable(true)
+        resizable(true)
     }
     webView(window) {
         url("kono://localhost/")
@@ -26,6 +28,9 @@ fun main() {
             else
                 assets.getAsset(path)
         }
+        addInitializationScript("""
+            kono.invoke("reverse", { "value": "" })
+        """.trimIndent())
         devTools(true)
     }
     eventLoop.run {
