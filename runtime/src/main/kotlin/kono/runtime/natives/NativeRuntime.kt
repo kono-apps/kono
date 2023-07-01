@@ -77,6 +77,8 @@ interface NativeRuntime : Library {
 
     fun createAsset(mimeType: String, content: ByteArray, contentLen: Int): AssetPtr
 
+    fun dropAsset(asset: AssetPtr)
+
 }
 
 @Suppress("unused") // actually used by JNA
