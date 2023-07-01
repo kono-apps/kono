@@ -19,7 +19,7 @@ class Asset(
         getContent()
     }
 
-    val assetPtr by lazy {
+    internal val assetPtr by lazy {
         nativeRuntime {
             createAsset(mimeType, content, content.size)
         }
