@@ -1,7 +1,6 @@
 package kono.app
 
 import com.squareup.moshi.Moshi
-import kono.config.KonoConfig
 import kono.json.parseConfig
 
 class KonoApplicationBuilder(private val context: KonoApplicationContext) {

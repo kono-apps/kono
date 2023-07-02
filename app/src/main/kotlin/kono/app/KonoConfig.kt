@@ -1,4 +1,4 @@
-package kono.config
+package kono.app
 
 import com.squareup.moshi.JsonClass
 

@@ -2,7 +2,6 @@ package kono.app
 
 import com.squareup.moshi.Moshi
 import kono.asset.AssetHandler
-import kono.config.KonoConfig
 import kono.window.EventLoop
 import kono.webview.webView
 import kono.window.window

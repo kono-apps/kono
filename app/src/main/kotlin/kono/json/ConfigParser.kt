@@ -2,7 +2,7 @@ package kono.json
 
 import com.squareup.moshi.JsonDataException
 import com.squareup.moshi.Moshi
-import kono.config.KonoConfig
+import kono.app.KonoConfig
 import okio.Buffer
 
 fun parseConfig(moshi: Moshi): KonoConfig {
