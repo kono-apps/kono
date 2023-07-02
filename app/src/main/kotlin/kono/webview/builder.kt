@@ -6,14 +6,23 @@ import kono.runtime.natives.NativeRuntime
 import kono.runtime.natives.WebViewBuilderPtr
 import kono.window.Window
 import org.intellij.lang.annotations.Language
+import java.io.File
+
+private val RunningDirectory by lazy {
+    File(System.getProperty("user.dir"))
+}
 
 /**
  * Creates a new WebView that is bound to the given window
  */
-fun webView(window: Window, block: WebViewBuilder.() -> Unit): WebView {
+fun webView(
+    window: Window,
+    runningDir: File = RunningDirectory,
+    block: WebViewBuilder.() -> Unit
+): WebView {
     val builder = WebViewBuilder(window)
     builder.block()
-    return builder.build()
+    return builder.build(runningDir)
 }
 
 /**
@@ -108,13 +117,13 @@ class WebViewBuilder internal constructor(private val window: Window) {
     /**
      * Builds the WebView
      */
-    fun build(): WebView {
+    fun build(runningDir: File): WebView {
         if (consumed)
             error("You cannot re-use the same builder twice!")
         consumed = true
         val webViewPtr = with(builderPtr) {
             nativeRuntime {
-                webViewBuild()
+                webViewBuild(runningDir.absolutePath)
             }
         }
         return WebView(webViewPtr)

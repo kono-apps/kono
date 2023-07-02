@@ -2,6 +2,7 @@ package kono.app
 
 import com.squareup.moshi.Moshi
 import kono.asset.AssetHandler
+import kono.webview.WebView
 import kono.window.EventLoop
 import kono.webview.webView
 import kono.window.window
@@ -25,14 +26,16 @@ class KonoApplication(
             maximized(config.window.maximized)
             size(width = config.window.width, height = config.window.height)
         }
-        val webView = webView(window) {
+        var wv: WebView? = null
+        wv = webView(window) {
             url("kono://localhost/")
             addCustomProtocol("kono") { path ->
                 assets.loadEmbeddedAsset(path)
             }
             addIpcHandler {
-                context.functions.call(moshi, it)
+                context.functions.call(moshi, it, wv!!)
             }
+            addScripts()
             devTools(config.app.debug)
         }
         eventLoop.run {

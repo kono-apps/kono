@@ -43,7 +43,7 @@ data class Greeting(
 @ExportFunction
 fun sendManyGreetings(
     user: String,
-    times: Int = 10,
+    times: Int,
     greeting: String = "Hello, "
 ): List<Greeting> {
     return buildList {

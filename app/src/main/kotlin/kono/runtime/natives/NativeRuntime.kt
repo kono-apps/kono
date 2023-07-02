@@ -55,6 +55,15 @@ interface NativeRuntime : Library {
         handler: CustomProtocolCallback
     ): WebViewBuilderPtr
 
+    fun WebViewPtr.webViewEval(
+        js: String,
+    ): WebViewBuilderPtr
+
+    fun WebViewPtr.webViewEvalWithCallback(
+        js: String,
+        callback: EvalCallback
+    ): WebViewBuilderPtr
+
     fun WebViewBuilderPtr.webViewSetDevTools(
         devTools: Boolean
     ): WebViewBuilderPtr
@@ -71,7 +80,7 @@ interface NativeRuntime : Library {
         handler: IPCHandler
     ): WebViewBuilderPtr
 
-    fun WebViewBuilderPtr.webViewBuild(): WebViewPtr
+    fun WebViewBuilderPtr.webViewBuild(runningDirectory: String): WebViewPtr
 
     fun EventLoopPtr.eventLoopRun(onInit: InitCallback)
 
@@ -84,6 +93,11 @@ interface NativeRuntime : Library {
 @Suppress("unused") // actually used by JNA
 fun interface CustomProtocolCallback : Callback {
     fun apply(path: String): AssetPtr
+}
+
+@Suppress("unused") // actually used by JNA
+fun interface EvalCallback : Callback {
+    fun apply(path: String)
 }
 
 @Suppress("unused") // actually used by JNA
