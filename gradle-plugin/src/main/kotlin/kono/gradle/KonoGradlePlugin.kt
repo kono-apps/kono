@@ -1,18 +1,16 @@
 package kono.gradle
 
 import com.github.jengelman.gradle.plugins.shadow.ShadowPlugin
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import com.google.devtools.ksp.gradle.KspExtension
 import com.google.devtools.ksp.gradle.KspGradleSubplugin
 import org.gradle.api.Action
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.plugins.JavaPluginExtension
 
 interface KonoPluginExtension {
     var mainClass: String
-    var config: String?
+    var assetsDir: String
 }
 
 const val KSP_PLUGIN = "com.google.devtools.ksp"
@@ -43,13 +41,20 @@ class KonoGradlePlugin : Plugin<Project> {
 
         project.addKonoDependencies()
         project.addMoshiDependencies()
-        project.extensions.getByType(KspExtension::class.java).apply {
-            arg("kono:projectDir", project.rootProject.projectDir.absolutePath)
-        }
+        project.afterEvaluate {
 
-        project.extensions.getByType(JavaPluginExtension::class.java).apply {
-            sourceSets.named("main") {
-                it.resources.srcDirs(project.rootProject.projectDir.resolve("dist"))
+            project.extensions.getByType(KspExtension::class.java).apply {
+                val assetsDir = project.kono.assetsDir ?: "../dist"
+                arg("kono:projectDir", project.rootProject.projectDir.absolutePath)
+                arg("kono:assetsDir", project.file(assetsDir).absolutePath)
+                println(project.file(assetsDir).absolutePath)
+            }
+
+            project.extensions.getByType(JavaPluginExtension::class.java).apply {
+                val assetsDir = project.kono.assetsDir ?: "../dist"
+                sourceSets.named("main") {
+                    it.resources.srcDirs(project.file(assetsDir).absolutePath)
+                }
             }
         }
     }
@@ -57,7 +62,6 @@ class KonoGradlePlugin : Plugin<Project> {
 
 fun Project.addKonoDependencies() {
     dependencies.add("implementation", project.project(":common"))
-    dependencies.add("implementation", project.project(":runtime"))
     dependencies.add("ksp", project.project(":codegen"))
 }
 

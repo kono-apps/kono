@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     id("kono.app") version "0.1"
     kotlin("jvm")
@@ -11,6 +13,7 @@ version = "0.1"
 
 kono {
     mainClass = "kono.MainKt"
+    assetsDir = "../dist"
 }
 
 repositories {
@@ -20,13 +23,13 @@ repositories {
 }
 
 dependencies {
+    implementation("net.java.dev.jna:jna:5.13.0")
 //    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1")
 //
 //    // Moshi for handling JSON
 //    implementation("com.squareup.moshi:moshi:1.14.0")
 //    ksp("com.squareup.moshi:moshi-kotlin-codegen:1.14.0")
 //
-//    implementation(project(":runtime"))
 //    compileOnly(project(":common"))
 //    ksp(project(":codegen"))
 }
@@ -39,12 +42,6 @@ kotlin {
     jvmToolchain(11)
 }
 
-//sourceSets {
-//    getByName("main") {
-//        resources.srcDirs(rootProject.projectDir.resolve("dist"))
-//    }
-//}
-
 // Makes generated code visible to IDE
 kotlin {
     sourceSets.main {
@@ -55,3 +52,7 @@ kotlin {
     }
 }
 
+
+tasks.withType(KotlinCompile::class).all {
+    kotlinOptions.freeCompilerArgs = listOf("-Xcontext-receivers")
+}

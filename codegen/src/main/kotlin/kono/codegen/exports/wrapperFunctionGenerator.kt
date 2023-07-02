@@ -16,14 +16,15 @@ import kono.export.ExportFunction
 import kono.codegen.kpoet.*
 import java.lang.reflect.Method
 
-private val JSON_CLASS = ClassName("com.squareup.moshi", "JsonClass")
+private val JsonClassType = ClassName("com.squareup.moshi", "JsonClass")
 private val MoshiType = ClassName("com.squareup.moshi", "Moshi")
 private val JsonReaderType = ClassName("com.squareup.moshi", "JsonReader")
+private val JsonWriterType = ClassName("com.squareup.moshi", "JsonWriter")
 
 private val INT_TYPE_BLOCK = CodeBlock.of("%T::class.javaPrimitiveType", INT)
 private val DefaultConstructorMarkerType = CodeBlock.of("java.lang.Object::class.java")
 
-private val JSON_GENERATE_ADAPTER = annotationBuilder(JSON_CLASS) {
+private val JSON_GENERATE_ADAPTER = annotationBuilder(JsonClassType) {
     addMember("generateAdapter = true")
 }
 
@@ -157,7 +158,7 @@ fun generateExportedFunction(
         addOriginatingKSFile(function.containingFile!!)
         addParameter("moshi", MoshiType)
         addParameter("input", JsonReaderType)
-        returns(String::class)
+        addParameter("output", JsonWriterType)
         beginControlFlow("try")
         addStatement(
             "val invocation = moshi.adapterOf<InvocationJson<${wrapperJsonClass.name}>>().fromJson(input)!!"
@@ -220,7 +221,7 @@ fun generateExportedFunction(
                         "val result = `synthetic$$jvmName`.invoke(null, %L, mask0, DEFAULT_CONSTRUCTOR_MARKER) as %T",
                         functionData.reflectionInvocationParameters, returnType
                     )
-                addStatement("return moshi.adapterOf<%T>().toJson(result)", returnType)
+                addStatement("moshi.adapterOf<%T>().toJson(output, result)", returnType)
             }
         } else {
             invokeWithFullParams(functionData, jvmName, returnType)
@@ -242,21 +243,21 @@ private fun ExportedFunctionData.generateNoArg(containingFile: KSFile) = funBuil
     addOriginatingKSFile(containingFile)
     addParameter("moshi", MoshiType)
     addParameter("input", JsonReaderType)
-    returns(String::class)
+    addParameter("output", JsonWriterType)
     if (isUnit()) {
         addStatement(buildString {
             append(packagePrefix)
             append(jvmName)
             append("()")
         })
-        addStatement("return %S", "{}")
+        addStatement("output.beginObject().endObject()")
     } else {
         addStatement("val result = " + buildString {
             append(packagePrefix)
             append(jvmName)
             append("()")
         })
-        addStatement("return moshi.adapterOf<%T>().toJson(result)", returnType)
+        addStatement("moshi.adapterOf<%T>().toJson(output, result)", returnType)
     }
 }
 
@@ -279,7 +280,7 @@ private fun FunSpec.Builder.invokeWithFullParams(
             append(name)
             append("(%L)")
         }, functionData.normalInvocationParameters)
-        addStatement("return moshi.adapterOf<%T>().toJson(result)", returnType)
+        addStatement("moshi.adapterOf<%T>().toJson(output, result)", returnType)
     }
 }
 

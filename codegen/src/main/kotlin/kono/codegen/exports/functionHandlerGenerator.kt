@@ -10,7 +10,7 @@ fun PropertySpec.Builder.createFunctionHandler(functions: Map<String, ExportedFu
     initializer(buildCodeBlock {
         beginControlFlow("kono.fns.functionHandler")
         functions.forEach { (jsName, fn) ->
-            addStatement("this[%S] = { m, r -> %L }", jsName, "kono.generated.${fn.jvmName}(m, r)")
+            addStatement("this[%S] = { m, r, o -> %L }", jsName, "kono.generated.${fn.jvmName}(m, r, o)")
         }
         endControlFlow()
     })

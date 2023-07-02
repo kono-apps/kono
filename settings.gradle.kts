@@ -11,7 +11,6 @@ rootProject.name = "kono"
 include(
     "app",
     "codegen",
-    "runtime",
     "gradle-plugin",
     "common"
 )

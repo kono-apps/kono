@@ -1,19 +1,23 @@
 package kono.config
 
-private const val DEFAULT_PROTOCOL = "kono"
+import com.squareup.moshi.JsonClass
 
+@JsonClass(generateAdapter = true)
 data class KonoConfig(
     val app: AppConfig,
     val window: WindowConfig,
     val build: BuildConfig
 )
 
+@JsonClass(generateAdapter = true)
 data class AppConfig(
     val name: String,
     val authors: List<String>,
-    val version: String
+    val version: String,
+    val debug: Boolean = false
 )
 
+@JsonClass(generateAdapter = true)
 data class WindowConfig(
     val title: String,
     val fullScreen: Boolean = false,
@@ -23,7 +27,8 @@ data class WindowConfig(
     val height: Int = 600
 )
 
+@JsonClass(generateAdapter = true)
 data class BuildConfig(
-    val protocol: String = DEFAULT_PROTOCOL,
-    val directory: String
+    val directory: String,
+    val landingAsset: String = "index.html"
 )

@@ -9,6 +9,6 @@ version = "0.1"
 
 tasks.withType<KotlinCompile> {
     kotlinOptions {
-        jvmTarget = "16"
+        jvmTarget = "11"
     }
 }

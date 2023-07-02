@@ -1,6 +1,6 @@
 package kono.generated
 
-import kono.KonoApplicationContext
+import kono.app.KonoApplicationContext
 
 val GeneratedAppContext by lazy {
     Class.forName("kono.generated.GeneratedKonoContext")

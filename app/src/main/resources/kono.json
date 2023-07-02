@@ -1,0 +1,18 @@
+{
+  "app": {
+    "authors": [
+      "Jim",
+      "Bob"
+    ],
+    "name": "Pocket Dictionary",
+    "version": 0.1,
+    "debug": true
+  },
+  "build": {
+    "directory": "dist"
+  },
+  "window": {
+    "fullScreen": false,
+    "title": "Pocket Dictionary"
+  }
+}

@@ -1,30 +1,54 @@
 package kono.asset
 
-import kono.webview.Asset
+import java.nio.file.Path
+import java.util.concurrent.ConcurrentHashMap
+import kotlin.io.path.Path
+import kotlin.io.path.invariantSeparatorsPathString
 
-internal fun assetHandler(assets: MutableMap<String, Asset>.() -> Unit): AssetHandler {
-    val fns = mutableMapOf<String, Asset>().also(assets)
-    return AssetHandler(fns)
+private fun String.toAssetPath(): String {
+    val path = Path(this).invariantSeparatorsPathString
+    return if (path.startsWith('/')) path
+    else "/$path"
 }
 
-fun embeddedAsset(mimeType: MimeType, path: String): Asset {
-    return Asset(mimeType) {
-        Asset::class.java.getResourceAsStream(path)!!.use { it.readAllBytes() }
-    }
-}
+private fun Path.toAssetPath() = invariantSeparatorsPathString
 
-class AssetHandler(private val assets: MutableMap<String, Asset> = mutableMapOf()) {
+class AssetHandler(
+    private val landingAsset: String
+) {
 
-    fun registerAsset(
-        path: String,
-        asset: Asset
-    ) {
-        if (assets.containsKey(path))
+    private val assets = ConcurrentHashMap<String, Asset>()
+
+    fun addAsset(path: String, asset: Asset) {
+        val assetPath = path.toAssetPath()
+        if (assets.containsKey(assetPath))
             error("An asset with name '$path' already exists!")
-        assets[path] = asset
+        assets[assetPath] = asset
     }
 
     fun getAsset(path: String): Asset {
-        return assets[path] ?: error("No such asset: '$path'. Have you added the codegen?")
+        return getAssetOrNull(path) ?: error("No such asset: $path")
+    }
+
+    fun getAssetOrNull(path: String): Asset? {
+        val assetPath = path.toAssetPath()
+        return assets[assetPath]
+    }
+
+    fun hasAsset(path: String): Boolean {
+        val assetPath = path.toAssetPath()
+        return assets.containsKey(assetPath)
+    }
+
+    fun loadEmbeddedAsset(path: String): Asset {
+        val assetPath = (if (path == "/") landingAsset else path).toAssetPath()
+        return assets.computeIfAbsent(assetPath) {
+            val mimeType = MimeType.fromExtension(assetPath.substringAfterLast('.', ""))
+            val stream = javaClass.getResourceAsStream(assetPath) ?: error {
+                "Cannot find embedded asset $assetPath. Have you enabled the Gradle plugin?"
+            }
+            val content = stream.use { it.readAllBytes() }
+            Asset(mimeType) { content }
+        }
     }
 }
