@@ -212,7 +212,7 @@ fun generateExportedFunction(
                         "val result = `synthetic$$jvmName`.invoke(null, %L, mask0, DEFAULT_CONSTRUCTOR_MARKER)",
                         functionData.reflectionInvocationParameters
                     )
-                addStatement("return %S", "{}")
+                addStatement("output.beginObject().endObject()")
             } else {
                 if (parameters.isEmpty())
                     addStatement("val result = `synthetic$$jvmName`.invoke(null, mask0, DEFAULT_CONSTRUCTOR_MARKER)")
@@ -273,7 +273,7 @@ private fun FunSpec.Builder.invokeWithFullParams(
             append(name)
             append("(%L)")
         }, functionData.normalInvocationParameters)
-        addStatement("return %S", "{}")
+        addStatement("output.beginObject().endObject()")
     } else {
         addStatement("val result = " + buildString {
             append(functionData.packagePrefix)
