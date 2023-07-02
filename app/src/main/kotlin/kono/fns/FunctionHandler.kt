@@ -7,7 +7,7 @@ import okio.Buffer
 
 typealias JsFunction = (Moshi, JsonReader, JsonWriter) -> Unit
 
-internal fun functionHandler(functions: MutableMap<String, JsFunction>.() -> Unit): FunctionHandler {
+fun functionHandler(functions: MutableMap<String, JsFunction>.() -> Unit): FunctionHandler {
     val fns = mutableMapOf<String, JsFunction>().also(functions)
     return FunctionHandler(fns)
 }

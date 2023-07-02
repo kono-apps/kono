@@ -12,7 +12,7 @@ dependencies {
     implementation("com.squareup:kotlinpoet:1.14.2")
     implementation("com.squareup:kotlinpoet-ksp:1.14.2")
     implementation("com.google.devtools.ksp:symbol-processing-api:1.8.20-RC-1.0.9")
-    implementation(project(":common"))
+    implementation(project(":app"))
 }
 
 kotlin {

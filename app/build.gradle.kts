@@ -1,20 +1,12 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("kono.app") version "0.1"
     kotlin("jvm")
-//    id("com.google.devtools.ksp") version "1.8.0-1.0.9"
-//    id("com.github.johnrengelman.shadow") version "7.0.0"
-//    application
+    id("com.google.devtools.ksp") version "1.8.0-1.0.9"
 }
 
 group = "kono"
 version = "0.1"
-
-kono {
-    mainClass = "kono.MainKt"
-    assetsDir = "../dist"
-}
 
 repositories {
     mavenCentral()
@@ -23,35 +15,18 @@ repositories {
 }
 
 dependencies {
-    implementation("net.java.dev.jna:jna:5.13.0")
-//    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1")
-//
-//    // Moshi for handling JSON
-//    implementation("com.squareup.moshi:moshi:1.14.0")
-//    ksp("com.squareup.moshi:moshi-kotlin-codegen:1.14.0")
-//
-//    compileOnly(project(":common"))
-//    ksp(project(":codegen"))
-}
 
-application {
-    mainClass.set("kono.MainKt")
+    // JNA for accessing native APIs
+    implementation("net.java.dev.jna:jna:5.13.0")
+
+    // Moshi for handling JSON
+    implementation("com.squareup.moshi:moshi:1.14.0")
+    ksp("com.squareup.moshi:moshi-kotlin-codegen:1.14.0")
 }
 
 kotlin {
     jvmToolchain(11)
 }
-
-// Makes generated code visible to IDE
-kotlin {
-    sourceSets.main {
-        kotlin.srcDirs(file("$buildDir/generated/ksp/main/kotlin"))
-    }
-    sourceSets.test {
-        kotlin.srcDir("$buildDir/generated/ksp/test/kotlin")
-    }
-}
-
 
 tasks.withType(KotlinCompile::class).all {
     kotlinOptions.freeCompilerArgs = listOf("-Xcontext-receivers")

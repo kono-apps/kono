@@ -2,7 +2,7 @@ pluginManagement {
     repositories {
         gradlePluginPortal()
         mavenCentral()
-        maven { url = uri("repos/maven-repo")}
+        maven { url = uri("repos/maven-repo") }
     }
 }
 
@@ -12,5 +12,5 @@ include(
     "app",
     "codegen",
     "gradle-plugin",
-    "common"
+    "sample"
 )

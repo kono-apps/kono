@@ -29,6 +29,5 @@ data class WindowConfig(
 
 @JsonClass(generateAdapter = true)
 data class BuildConfig(
-    val directory: String,
     val landingAsset: String = "index.html"
 )
