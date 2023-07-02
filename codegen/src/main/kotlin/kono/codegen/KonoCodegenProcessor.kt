@@ -5,17 +5,18 @@ import com.google.devtools.ksp.processing.KSPLogger
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.processing.SymbolProcessor
 import com.google.devtools.ksp.symbol.KSAnnotated
-import com.squareup.kotlinpoet.*
+import com.squareup.kotlinpoet.FileSpec
+import com.squareup.kotlinpoet.KModifier
+import com.squareup.kotlinpoet.PropertySpec
+import com.squareup.kotlinpoet.TypeSpec
 import com.squareup.kotlinpoet.ksp.addOriginatingKSFile
 import com.squareup.kotlinpoet.ksp.writeTo
 import kono.app.KonoApplicationContext
-import kono.codegen.exports.FunctionHandlerType
 import kono.codegen.exports.createFunctionHandler
 import kono.codegen.exports.parseExportedFunctions
 import kono.fns.FunctionHandler
 
 class KonoCodegenProcessor(
-    private val options: Map<String, String>,
     private val codeGenerator: CodeGenerator,
     private val logger: KSPLogger
 ) : SymbolProcessor {
