@@ -5,10 +5,7 @@
       "Bob"
     ],
     "name": "Pocket Dictionary",
-    "version": 0.1,
+    "version": "0.1",
     "debug": true
-  },
-  "window": {
-    "title": "Pocket Dictionary"
   }
 }

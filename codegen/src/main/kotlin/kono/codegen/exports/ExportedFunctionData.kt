@@ -27,7 +27,7 @@ class ExportedFunctionData(
             buildString {
                 append("${param.name} = invocation.data.${param.name}")
                 if (param.hasDefault && !param.isNullable && !param.isPrimitive)
-                    append("?: error(\"null was provided for non-null parameter ${param.name}\")")
+                    append("?: error(\"\"\"null was provided for non-null parameter ${param.name}\"\"\")")
             }
         }
     }
