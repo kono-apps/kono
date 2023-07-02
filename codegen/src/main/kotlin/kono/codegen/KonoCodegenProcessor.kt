@@ -8,11 +8,11 @@ import com.google.devtools.ksp.symbol.KSAnnotated
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ksp.addOriginatingKSFile
 import com.squareup.kotlinpoet.ksp.writeTo
+import kono.app.KonoApplicationContext
 import kono.codegen.exports.FunctionHandlerType
 import kono.codegen.exports.createFunctionHandler
 import kono.codegen.exports.parseExportedFunctions
-
-val APP_CONTEXT = ClassName("kono.app", "KonoApplicationContext")
+import kono.fns.FunctionHandler
 
 class KonoCodegenProcessor(
     private val options: Map<String, String>,
@@ -26,7 +26,7 @@ class KonoCodegenProcessor(
             return emptyList()
         }
         invoked = true
-        val propBuilder = PropertySpec.builder("functions", FunctionHandlerType, KModifier.OVERRIDE)
+        val propBuilder = PropertySpec.builder("functions", FunctionHandler::class, KModifier.OVERRIDE)
 
         // Handle @ExportFunctions
         val functions = parseExportedFunctions(resolver, logger, codeGenerator) {
@@ -37,7 +37,7 @@ class KonoCodegenProcessor(
         val functionHandler = propBuilder.createFunctionHandler(functions = functions)
 
         val generatedContext = TypeSpec.classBuilder("GeneratedKonoContext")
-            .addSuperinterface(APP_CONTEXT)
+            .addSuperinterface(KonoApplicationContext::class)
             .addProperty(functionHandler)
             .build()
 

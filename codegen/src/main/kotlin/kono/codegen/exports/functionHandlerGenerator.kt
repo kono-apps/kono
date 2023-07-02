@@ -1,10 +1,7 @@
 package kono.codegen.exports
 
-import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.PropertySpec
 import com.squareup.kotlinpoet.buildCodeBlock
-
-val FunctionHandlerType = ClassName("kono.fns", "FunctionHandler")
 
 fun PropertySpec.Builder.createFunctionHandler(functions: Map<String, ExportedFunctionData>): PropertySpec {
     initializer(buildCodeBlock {
