@@ -8,9 +8,7 @@
     "version": 0.1,
     "debug": true
   },
-  "build": {},
   "window": {
-    "fullScreen": false,
     "title": "Pocket Dictionary"
   }
 }

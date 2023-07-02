@@ -5,8 +5,10 @@ import com.squareup.moshi.JsonClass
 @JsonClass(generateAdapter = true)
 data class KonoConfig(
     val app: AppConfig,
-    val window: WindowConfig,
-    val build: BuildConfig
+    val window: WindowConfig = WindowConfig(
+        title = app.name
+    ),
+    val build: BuildConfig = BuildConfig()
 )
 
 @JsonClass(generateAdapter = true)

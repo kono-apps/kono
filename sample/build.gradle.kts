@@ -5,7 +5,7 @@ plugins {
 
 kono {
     assetsDir = "../dist"
-    mainClass = "kono.samples.MainKt"
+    mainClass = "kono.sample.MainKt"
 }
 
 repositories {

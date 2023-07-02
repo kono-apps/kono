@@ -48,7 +48,6 @@ class KonoGradlePlugin : Plugin<Project> {
                 val assetsDir = project.kono.assetsDir ?: error("Missing property 'assetsDir'")
                 arg("kono:projectDir", project.rootProject.projectDir.absolutePath)
                 arg("kono:assetsDir", project.file(assetsDir).absolutePath)
-                println(project.file(assetsDir).absolutePath)
             }
 
             project.extensions.getByType(JavaPluginExtension::class.java).apply {
