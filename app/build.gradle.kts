@@ -15,6 +15,7 @@ repositories {
 }
 
 dependencies {
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1")
 
     // JNA for accessing native APIs
     implementation("net.java.dev.jna:jna:5.13.0")
