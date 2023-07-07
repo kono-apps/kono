@@ -50,7 +50,6 @@ fun parseExportedFunctions(
         )
         .addImport(
             "kono.json.internal",
-            "InvocationJson",
             "DEFAULT_CONSTRUCTOR_MARKER"
         )
         .addImport("kono.ipc", "FunctionInvocationException")
