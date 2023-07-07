@@ -6,7 +6,7 @@ plugins {
 }
 
 kono {
-    assetsDir = "../dist"
+    assetsDir = "../../kono-svelte-sample/build"
     mainClass = "kono.sample.MainKt"
 }
 

@@ -1,8 +1,8 @@
 package kono.window
 
-import kono.runtime.natives.nativeRuntime
 import kono.runtime.natives.NativeRuntime
 import kono.runtime.natives.WindowBuilderPtr
+import kono.runtime.natives.nativeRuntime
 
 /**
  * Creates a new Window to be run on the event loop
@@ -81,6 +81,13 @@ class WindowBuilder internal constructor() {
      */
     fun closable(closable: Boolean) = update {
         windowBuilderSetClosable(closable)
+    }
+
+    /**
+     * Sets the webview theme
+     */
+    fun theme(theme: WindowTheme) = update {
+        windowBuilderSetTheme(theme.ordinal.toByte())
     }
 
     /**

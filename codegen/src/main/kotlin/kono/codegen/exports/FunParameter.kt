@@ -8,7 +8,7 @@ import kono.codegen.util.asTypeBlock
 import kono.codegen.util.isPrimitive
 
 class FunParameter(
-    parameter: KSValueParameter
+    parameter: KSValueParameter,
 ) {
     val type: KSType = parameter.type.resolve()
     val hasDefault = parameter.hasDefault
@@ -17,6 +17,7 @@ class FunParameter(
     val typeName = type.toTypeName()
     val isPrimitive = typeName.isPrimitive()
     val typeBlock = typeName.asTypeBlock()
+    val contextItem: ContextItem? = ContextItems[typeName]
 }
 
 fun FunParameter.getValueForNull(): String {

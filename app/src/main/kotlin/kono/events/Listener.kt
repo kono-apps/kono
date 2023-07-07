@@ -1,5 +1,5 @@
-package kono.export
+package kono.events
 
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)
-annotation class ExportFunction(val name: String = "")
+annotation class Listener(val event: String = "")

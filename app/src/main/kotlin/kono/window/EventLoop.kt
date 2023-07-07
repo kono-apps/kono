@@ -1,7 +1,7 @@
 package kono.window
 
-import kono.runtime.natives.nativeRuntime
 import kono.runtime.natives.EventLoopPtr
+import kono.runtime.natives.nativeRuntime
 
 /**
  * Represents the context in which windows are running. Multiple

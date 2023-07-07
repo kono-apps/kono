@@ -1,7 +1,5 @@
 package kono.asset
 
-import java.nio.file.Path
-import java.util.concurrent.ConcurrentHashMap
 import kotlin.io.path.Path
 import kotlin.io.path.invariantSeparatorsPathString
 
@@ -11,13 +9,9 @@ private fun String.toAssetPath(): String {
     else "/$path"
 }
 
-private fun Path.toAssetPath() = invariantSeparatorsPathString
+class AssetHandler(private val landingAsset: String) {
 
-class AssetHandler(
-    private val landingAsset: String
-) {
-
-    private val assets = ConcurrentHashMap<String, Asset>()
+    private val assets = HashMap<String, Asset>()
 
     fun addAsset(path: String, asset: Asset) {
         val assetPath = path.toAssetPath()
@@ -27,7 +21,8 @@ class AssetHandler(
     }
 
     fun getAsset(path: String): Asset {
-        return getAssetOrNull(path) ?: error("No such asset: $path")
+        val assetPath = path.toAssetPath()
+        return assets[assetPath] ?: error("No such asset: $assetPath")
     }
 
     fun getAssetOrNull(path: String): Asset? {

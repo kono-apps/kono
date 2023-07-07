@@ -9,8 +9,8 @@ import kono.export.ExportFunction
  * Reverses the given string
  */
 @ExportFunction
-fun reverse(value: String): String {
-    return value.reversed()
+fun reverse(name: String = "Kono"): String {
+    return name.reversed()
 }
 
 /**
@@ -32,7 +32,7 @@ fun greet(user: String, greeting: String = "Hello, "): String {
 @JsonClass(generateAdapter = true)
 data class Greeting(
     val user: String,
-    val greeting: String = "Hello, "
+    val greeting: String = "Hello, ",
 )
 
 /**
@@ -44,7 +44,7 @@ data class Greeting(
 fun sendManyGreetings(
     user: String,
     times: Int,
-    greeting: String = "Hello, "
+    greeting: String = "Hello, ",
 ): List<Greeting> {
     return buildList {
         repeat(times) {

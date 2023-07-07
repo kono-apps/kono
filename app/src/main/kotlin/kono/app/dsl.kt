@@ -6,14 +6,14 @@ import java.io.File
 
 fun runKonoApplication(
     context: KonoApplicationContext = GeneratedAppContext,
-    block: KonoApplicationBuilder.() -> Unit = {}
+    block: KonoApplicationBuilder.() -> Unit = {},
 ) {
     konoApplication(context, block).start()
 }
 
 fun konoApplication(
     context: KonoApplicationContext = GeneratedAppContext,
-    block: KonoApplicationBuilder.() -> Unit = {}
+    block: KonoApplicationBuilder.() -> Unit = {},
 ): KonoApplication {
     val builder = KonoApplicationBuilder(context)
     builder.block()

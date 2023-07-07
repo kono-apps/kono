@@ -1,6 +1,7 @@
 package kono.app
 
-import kono.fns.FunctionHandler
+import kono.events.EventHandler
+import kono.ipc.FunctionHandler
 
 /**
  * Represents the environment context that the app is being run into.
@@ -11,5 +12,9 @@ import kono.fns.FunctionHandler
  * See [kono.generated.GeneratedAppContext]
  */
 interface KonoApplicationContext {
-    val functions: FunctionHandler
+
+    fun createFunctionHandler(app: KonoApplication): FunctionHandler
+
+    fun createEventHandler(app: KonoApplication): EventHandler
+
 }

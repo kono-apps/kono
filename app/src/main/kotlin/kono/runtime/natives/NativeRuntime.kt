@@ -32,6 +32,8 @@ interface NativeRuntime : Library {
 
     fun WindowBuilderPtr.windowBuilderSetResizable(closable: Boolean): WindowBuilderPtr
 
+    fun WindowBuilderPtr.windowBuilderSetTheme(theme: Byte): WindowBuilderPtr
+
     fun WindowBuilderPtr.windowBuild(eventLoop: EventLoopPtr): WindowPtr
 
     /**
@@ -79,6 +81,8 @@ interface NativeRuntime : Library {
     fun WebViewBuilderPtr.webViewAddIPCHandler(
         handler: IPCHandler
     ): WebViewBuilderPtr
+
+    fun WebViewBuilderPtr.webViewBuilderSetTheme(theme: Byte): WebViewPtr
 
     fun WebViewBuilderPtr.webViewBuild(runningDirectory: String): WebViewPtr
 

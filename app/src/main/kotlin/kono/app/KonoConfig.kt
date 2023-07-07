@@ -15,7 +15,7 @@ data class KonoConfig(
 data class AppConfig(
     val name: String,
     val authors: List<String>,
-    val version: String,
+    val version: String = "1.0.0",
     val debug: Boolean = false
 )
 
@@ -24,7 +24,8 @@ data class WindowConfig(
     val title: String,
     val fullScreen: Boolean = false,
     val resizable: Boolean = true,
-    val maximized: Boolean = false,
+    val maximized: Boolean = true,
+    val closable: Boolean = true,
     val width: Int = 800,
     val height: Int = 600
 )

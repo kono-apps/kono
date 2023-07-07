@@ -65,6 +65,13 @@ class WebViewBuilder internal constructor(private val window: Window) {
     }
 
     /**
+     * Sets the webview theme
+     */
+    fun theme(theme: WebViewTheme) = update {
+        webViewBuilderSetTheme(theme.ordinal.toByte())
+    }
+
+    /**
      * Register custom file loading protocols with pairs of scheme uri string and
      * a handling function.
      */

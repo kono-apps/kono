@@ -8,21 +8,24 @@ import com.google.devtools.ksp.processing.KSPLogger
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.symbol.KSFile
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
+import com.google.devtools.ksp.symbol.Modifier
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ksp.addOriginatingKSFile
 import com.squareup.kotlinpoet.ksp.toTypeName
 import com.squareup.kotlinpoet.ksp.writeTo
 import kono.export.ExportFunction
 import kono.codegen.kpoet.*
+import kono.ipc.FunctionContext
+import kono.ipc.RunFunctionRequest
 import java.lang.reflect.Method
 
 private val JsonClassType = ClassName("com.squareup.moshi", "JsonClass")
 private val MoshiType = ClassName("com.squareup.moshi", "Moshi")
-private val JsonReaderType = ClassName("com.squareup.moshi", "JsonReader")
 private val JsonWriterType = ClassName("com.squareup.moshi", "JsonWriter")
 
 private val INT_TYPE_BLOCK = CodeBlock.of("%T::class.javaPrimitiveType", INT)
 private val DefaultConstructorMarkerType = CodeBlock.of("java.lang.Object::class.java")
+//private val ContinuationMarkerType = CodeBlock.of("kotlin.coroutines.Continuation::class.java")
 
 private val JSON_GENERATE_ADAPTER = annotationBuilder(JsonClassType) {
     addMember("generateAdapter = true")
@@ -32,7 +35,7 @@ fun parseExportedFunctions(
     resolver: Resolver,
     logger: KSPLogger,
     codeGenerator: CodeGenerator,
-    addOriginatingFiles: (KSFile) -> Unit
+    addOriginatingFiles: (KSFile) -> Unit,
 ): Map<String, ExportedFunctionData> {
     val exportedFunctions = resolver.getSymbolsWithAnnotation(ExportFunction::class.java.name)
     if (exportedFunctions.none())
@@ -40,6 +43,7 @@ fun parseExportedFunctions(
     val allFunctions = mutableMapOf<String, ExportedFunctionData>()
     val functionsFile = FileSpec
         .builder("kono.generated", "functions")
+//        .addImport("kotlin.coroutines", "suspendCoroutine")
         .addImport(
             "kono.json",
             "adapterOf"
@@ -49,7 +53,7 @@ fun parseExportedFunctions(
             "InvocationJson",
             "DEFAULT_CONSTRUCTOR_MARKER"
         )
-        .addImport("kono.fns", "FunctionInvocationException")
+        .addImport("kono.ipc", "FunctionInvocationException")
     // Masks code has been re-adapted from Moshi's codegen
     for (function in exportedFunctions) {
         if (function !is KSFunctionDeclaration)
@@ -74,7 +78,7 @@ fun generateExportedFunction(
     resolver: Resolver,
     logger: KSPLogger,
     allFunctions: MutableMap<String, ExportedFunctionData>,
-    addContentTo: FileSpec.Builder
+    addContentTo: FileSpec.Builder,
 ) {
 
     val jvmClassName = resolver.getOwnerJvmClassName(function)!!
@@ -83,7 +87,12 @@ fun generateExportedFunction(
     val jsName = annotation.name.ifBlank { resolver.getJvmName(function)!! }
     val jvmName = resolver.getJvmName(function)!!
 
-    val returnType = function.returnType!!.resolve().toTypeName()
+    val returnType = run {
+        var type = function.returnType!!.resolve()
+        if (type.toTypeName() == UNIT)
+            type = type.makeNullable()
+        type.toTypeName()
+    }
 
     if (allFunctions.containsKey(jsName))
         logger.error("Found 2 exported functions with the same name: '$jsName'. Names must be unique", function)
@@ -91,7 +100,12 @@ fun generateExportedFunction(
     if (!function.isPublic())
         logger.error("Exported functions must be public!", function)
 
-    val parameters = function.parameters.map { FunParameter(it) }
+    if (function.modifiers.contains(Modifier.SUSPEND))
+        logger.error("Exported functions cannot be 'suspend'!", function)
+
+    val parameters = function.parameters.map {
+        FunParameter(parameter = it)
+    }
 
     val functionData = ExportedFunctionData(
         function,
@@ -136,7 +150,12 @@ fun generateExportedFunction(
         }
     }
 
-    val properties = parameters.map { it.toParameterSpec() }
+    val properties = parameters.mapNotNull {
+        if (it.contextItem != null)
+            null
+        else
+            it.toParameterSpec()
+    }
 
     val wrapperJsonClass = classBuilder("FnJson_$jvmName") {
         addAnnotation(JSON_GENERATE_ADAPTER)
@@ -145,7 +164,7 @@ fun generateExportedFunction(
 
     if (hasDefaultParams) {
         addContentTo.addProperty(
-            propertySpec = generateReflectionMethod(
+            propertySpec = functionData.generateReflectionMethod(
                 parameters,
                 maskCount,
                 jvmName,
@@ -157,14 +176,19 @@ fun generateExportedFunction(
     val wrapperFunction = funBuilder(jvmName) {
         addOriginatingKSFile(function.containingFile!!)
         addParameter("moshi", MoshiType)
-        addParameter("input", JsonReaderType)
+        addParameter("request", RunFunctionRequest::class)
         addParameter("output", JsonWriterType)
+        addParameter("context", FunctionContext::class)
+
+//        if (functionData.isSuspend)
+//            addModifiers(KModifier.SUSPEND)
+
         beginControlFlow("try")
-        addStatement(
-            "val invocation = moshi.adapterOf<InvocationJson<${wrapperJsonClass.name}>>().fromJson(input)!!"
-        )
-        if (hasDefaultParams) {
-            addStatement("val passedParameters = invocation.passedParameters")
+        addStatement("val functionData = moshi.adapterOf<${wrapperJsonClass.name}>().fromJsonValue(request.data)!!")
+        if (!hasDefaultParams) {
+            invokeWithFullParams(functionData, jvmName, returnType)
+        } else {
+            addStatement("val passedParameters = request.passedParameters")
             addStatement("var name = passedParameters.removeFirstOrNull()")
             // Initialize all our masks, defaulting to fully unset (-1)
             for (maskName in maskNames) {
@@ -172,11 +196,11 @@ fun generateExportedFunction(
             }
             beginControlFlow("while (name != null)")
             beginControlFlow("when (name)")
-
             for (parameter in parameters) {
-                beginControlFlow("%S ->", parameter.name)
+                if (parameter.contextItem != null) continue
 
                 if (parameter.hasDefault) {
+                    beginControlFlow("%S ->", parameter.name)
                     val inverted = (1 shl maskIndex).inv()
                     maskAllSetValues[maskNameIndex] = maskAllSetValues[maskNameIndex] and inverted
                     addComment("\$mask = \$mask and (1 shl %L).inv()", maskIndex)
@@ -185,9 +209,9 @@ fun generateExportedFunction(
                         maskNames[maskNameIndex],
                         Integer.toHexString(inverted),
                     )
+                    endControlFlow()
                 }
 
-                endControlFlow()
                 updateMaskIndexes()
             }
             endControlFlow() // when
@@ -201,30 +225,32 @@ fun generateExportedFunction(
             beginControlFlow("if (%L)", allMasksAreSetBlock)
             addComment("All parameters are provided. No need to use the synthetic method!")
             invokeWithFullParams(functionData, jvmName, returnType)
+            addStatement("return")
             endControlFlow()
 
             addComment("Different parameters were used. Invoke the synthetic method")
-            if (functionData.isUnit()) {
-                if (parameters.isEmpty())
-                    addStatement("val result = `synthetic$$jvmName`.invoke(null, mask0, DEFAULT_CONSTRUCTOR_MARKER)")
-                else
-                    addStatement(
-                        "val result = `synthetic$$jvmName`.invoke(null, %L, mask0, DEFAULT_CONSTRUCTOR_MARKER)",
-                        functionData.reflectionInvocationParameters
-                    )
-                addStatement("output.beginObject().endObject()")
-            } else {
-                if (parameters.isEmpty())
-                    addStatement("val result = `synthetic$$jvmName`.invoke(null, mask0, DEFAULT_CONSTRUCTOR_MARKER)")
-                else
-                    addStatement(
-                        "val result = `synthetic$$jvmName`.invoke(null, %L, mask0, DEFAULT_CONSTRUCTOR_MARKER) as %T",
-                        functionData.reflectionInvocationParameters, returnType
-                    )
-                addStatement("moshi.adapterOf<%T>().toJson(output, result)", returnType)
-            }
-        } else {
-            invokeWithFullParams(functionData, jvmName, returnType)
+//            if (functionData.isSuspend) {
+//                beginControlFlow("suspendCoroutine<Unit> { continuation -> ")
+//                if (parameters.isEmpty())
+//                    addStatement("val result = `synthetic$$jvmName`.invoke(null, continuation, mask0, DEFAULT_CONSTRUCTOR_MARKER)")
+//                else
+//                    addStatement(
+//                        "val result = `synthetic$$jvmName`.invoke(null, %L, continuation, mask0, DEFAULT_CONSTRUCTOR_MARKER) as %T",
+//                        functionData.reflectionInvocationParameters, returnType
+//                    )
+//                addStatement("moshi.adapterOf<%T>().toJson(output, result)", returnType)
+//                endControlFlow()
+//            } else {
+            if (parameters.isEmpty())
+                addStatement("val result = `synthetic$$jvmName`.invoke(null, mask0, DEFAULT_CONSTRUCTOR_MARKER)")
+            else
+                addStatement(
+                    "val result = `synthetic$$jvmName`.invoke(null, %L, mask0, DEFAULT_CONSTRUCTOR_MARKER) as %T",
+                    functionData.reflectionInvocationParameters, returnType
+                )
+            addStatement("moshi.adapterOf<%T>().toJson(output, result)", returnType)
+//            }
+            addStatement("return")
         }
         endControlFlow() // try
         beginControlFlow("catch (ex: com.squareup.moshi.JsonDataException)")
@@ -242,49 +268,32 @@ fun generateExportedFunction(
 private fun ExportedFunctionData.generateNoArg(containingFile: KSFile) = funBuilder(jvmName) {
     addOriginatingKSFile(containingFile)
     addParameter("moshi", MoshiType)
-    addParameter("input", JsonReaderType)
+    addParameter("data", Any::class)
     addParameter("output", JsonWriterType)
-    if (isUnit()) {
-        addStatement(buildString {
-            append(packagePrefix)
-            append(jvmName)
-            append("()")
-        })
-        addStatement("output.beginObject().endObject()")
-    } else {
-        addStatement("val result = " + buildString {
-            append(packagePrefix)
-            append(jvmName)
-            append("()")
-        })
-        addStatement("moshi.adapterOf<%T>().toJson(output, result)", returnType)
-    }
+    addStatement("val result = " + buildString {
+        append(packagePrefix)
+        append(jvmName)
+        append("()")
+    })
+    addStatement("moshi.adapterOf<%T>().toJson(output, result)", returnType)
+    addStatement("return")
 }
 
 
 private fun FunSpec.Builder.invokeWithFullParams(
     functionData: ExportedFunctionData,
     name: String,
-    returnType: TypeName
+    returnType: TypeName,
 ) {
-    if (functionData.isUnit()) {
-        addStatement(buildString {
-            append(functionData.packagePrefix)
-            append(name)
-            append("(%L)")
-        }, functionData.normalInvocationParameters)
-        addStatement("output.beginObject().endObject()")
-    } else {
-        addStatement("val result = " + buildString {
-            append(functionData.packagePrefix)
-            append(name)
-            append("(%L)")
-        }, functionData.normalInvocationParameters)
-        addStatement("moshi.adapterOf<%T>().toJson(output, result)", returnType)
-    }
+    addStatement("val result = " + buildString {
+        append(functionData.packagePrefix)
+        append(name)
+        append("(%L)")
+    }, functionData.normalInvocationParameters)
+    addStatement("moshi.adapterOf<%T>().toJson(output, result)", returnType)
 }
 
-private fun generateReflectionMethod(
+private fun ExportedFunctionData.generateReflectionMethod(
     parameters: List<FunParameter>,
     maskCount: Int,
     name: String,
@@ -293,6 +302,12 @@ private fun generateReflectionMethod(
     val methodArguments = mutableListOf<CodeBlock>()
     parameters.forEach { methodArguments.add(it.typeBlock) }
     val args = methodArguments
+//        .run {
+//            if (isSuspend)
+//                plus(ContinuationMarkerType)
+//            else
+//                this
+//        }
         .plus(0.until(maskCount).map { INT_TYPE_BLOCK }) // Masks, one every 32 params
         .plus(DefaultConstructorMarkerType)  // Default constructor marker is always last
         .joinToCode(", ")
