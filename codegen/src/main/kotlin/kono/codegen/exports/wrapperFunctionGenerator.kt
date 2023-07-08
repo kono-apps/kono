@@ -285,7 +285,6 @@ private fun generateReflectionMethod(
     val methodArguments = mutableListOf<CodeBlock>()
     parameters.forEach { methodArguments.add(it.typeBlock) }
     val args = methodArguments
-
         .plus(0.until(maskCount).map { INT_TYPE_BLOCK }) // Masks, one every 32 params
         .plus(DefaultConstructorMarkerType)  // Default constructor marker is always last
         .joinToCode(", ")

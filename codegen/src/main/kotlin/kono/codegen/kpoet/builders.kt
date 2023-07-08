@@ -24,19 +24,6 @@ fun funBuilder(name: String, block: FunSpec.Builder.() -> Unit): FunSpec {
     return builder.build()
 }
 
-//
-//fun TypeSpec.Builder.primaryConstructor(properties: List<PropertySpec>): TypeSpec.Builder {
-//    val propertySpecs = properties.map { p -> p.toBuilder().initializer(p.name).build() }
-//    val parameters = propertySpecs.map { ParameterSpec.builder(it.name, it.type).build() }
-//    val constructor = FunSpec.constructorBuilder()
-//        .addParameters(parameters)
-//        .build()
-//
-//    return this
-//        .primaryConstructor(constructor)
-//        .addProperties(propertySpecs)
-//}
-
 fun TypeSpec.Builder.primaryConstructor(parameters: List<ParameterSpec>): TypeSpec.Builder {
     val propertySpecs = parameters.map {
         PropertySpec.builder(it.name, it.type).initializer(it.name).build()
