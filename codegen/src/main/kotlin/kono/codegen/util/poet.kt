@@ -1,4 +1,4 @@
-package kono.codegen.kpoet
+package kono.codegen.util
 
 import com.squareup.kotlinpoet.*
 

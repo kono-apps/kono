@@ -13,7 +13,7 @@ import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ksp.addOriginatingKSFile
 import com.squareup.kotlinpoet.ksp.toTypeName
 import com.squareup.kotlinpoet.ksp.writeTo
-import kono.codegen.kpoet.*
+import kono.codegen.util.*
 import kono.export.ExportFunction
 import kono.ipc.FunctionContext
 import kono.ipc.RunFunctionRequest
