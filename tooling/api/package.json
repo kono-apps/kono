@@ -1,0 +1,25 @@
+{
+  "name": "@kono-apps/api",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "src/index.ts",
+  "description": "A cross-platform framework for building native desktop apps",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "."
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "kono",
+    "kono-api",
+    "desktop"
+  ],
+  "author": "Revxrsal",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^5.1.6"
+  }
+}
