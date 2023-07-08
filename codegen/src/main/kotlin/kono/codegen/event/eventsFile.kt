@@ -65,7 +65,7 @@ fun createEventsHandler(
                 logger = logger
             )
         }
-        endControlFlow() // functionHandler
+        endControlFlow() // EventHandler()
     }
 }
 
