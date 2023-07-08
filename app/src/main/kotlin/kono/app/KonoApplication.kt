@@ -59,7 +59,6 @@ class KonoApplication(
                 )
                 ipcHandler.handle(request, context)
             }
-            addScripts()
             devTools(config.app.debug)
         }
         eventLoop.run {

@@ -19,9 +19,3 @@ fun konoApplication(
     builder.block()
     return builder.build()
 }
-
-fun WebViewBuilder.addScripts() {
-    for (file in File("F:\\Java\\kono-apps\\kono\\kono-js").listFiles()!!)
-        if (file.extension == "js")
-            addInitializationScript(file.readText())
-}

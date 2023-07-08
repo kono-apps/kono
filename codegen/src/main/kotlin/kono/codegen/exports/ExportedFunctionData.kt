@@ -1,8 +1,6 @@
 package kono.codegen.exports
 
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
-import com.google.devtools.ksp.symbol.Modifier
-import com.squareup.kotlinpoet.UNIT
 import com.squareup.kotlinpoet.ksp.toTypeName
 
 class ExportedFunctionData(
@@ -11,7 +9,6 @@ class ExportedFunctionData(
     val jvmName: String,
 ) {
 
-    val isSuspend = function.modifiers.contains(Modifier.SUSPEND)
     val packageName = function.packageName.asString()
     val returnType = function.returnType!!.resolve().toTypeName()
 
