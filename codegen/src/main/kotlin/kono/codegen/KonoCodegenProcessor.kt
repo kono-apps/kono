@@ -5,14 +5,16 @@ import com.google.devtools.ksp.processing.KSPLogger
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.processing.SymbolProcessor
 import com.google.devtools.ksp.symbol.KSAnnotated
-import com.google.devtools.ksp.symbol.KSTypeReference
-import com.squareup.kotlinpoet.*
+import com.squareup.kotlinpoet.FileSpec
+import com.squareup.kotlinpoet.FunSpec
+import com.squareup.kotlinpoet.KModifier
+import com.squareup.kotlinpoet.TypeSpec
 import com.squareup.kotlinpoet.ksp.addOriginatingKSFile
 import com.squareup.kotlinpoet.ksp.writeTo
 import kono.app.KonoApplication
 import kono.app.KonoApplicationContext
-import kono.codegen.exports.createFunctionHandler
 import kono.codegen.exports.createEventHandler
+import kono.codegen.exports.createFunctionHandler
 import kono.codegen.exports.parseExportedFunctions
 import kono.events.EventHandler
 import kono.export.ExportEvent
@@ -61,7 +63,6 @@ class KonoCodegenProcessor(
             .build()
 
         val file = FileSpec.builder("kono.generated", "context")
-//            .addImport("kotlinx.coroutines", "async")
             .addType(generatedContext)
             .build()
 

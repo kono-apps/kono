@@ -25,7 +25,6 @@ private val JsonWriterType = ClassName("com.squareup.moshi", "JsonWriter")
 
 private val INT_TYPE_BLOCK = CodeBlock.of("%T::class.javaPrimitiveType", INT)
 private val DefaultConstructorMarkerType = CodeBlock.of("java.lang.Object::class.java")
-//private val ContinuationMarkerType = CodeBlock.of("kotlin.coroutines.Continuation::class.java")
 
 private val JSON_GENERATE_ADAPTER = annotationBuilder(JsonClassType) {
     addMember("generateAdapter = true")
@@ -43,7 +42,6 @@ fun parseExportedFunctions(
     val allFunctions = mutableMapOf<String, ExportedFunctionData>()
     val functionsFile = FileSpec
         .builder("kono.generated", "functions")
-//        .addImport("kotlin.coroutines", "suspendCoroutine")
         .addImport(
             "kono.json",
             "adapterOf"
