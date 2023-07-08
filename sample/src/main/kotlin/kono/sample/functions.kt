@@ -2,6 +2,12 @@ package kono.sample
 
 import com.squareup.moshi.JsonClass
 import kono.export.ExportFunction
+import kono.webview.WebView
+
+@ExportFunction
+fun ping(value: String = "", webView: WebView) {
+    webView.eval("console.log('$value')")
+}
 
 /**
  * (A simple function)

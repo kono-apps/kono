@@ -1,6 +1,11 @@
 package kono.codegen.util
 
 import com.squareup.kotlinpoet.*
+import com.squareup.moshi.JsonClass
+
+val JSON_CLASS_ADAPTER = AnnotationSpec.builder(JsonClass::class)
+    .addMember("generateAdapter = true")
+    .build()
 
 fun classBuilder(name: String, block: TypeSpec.Builder.() -> Unit): TypeSpec {
     val typeSpecBuilder = TypeSpec.classBuilder(name)

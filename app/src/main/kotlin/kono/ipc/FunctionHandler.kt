@@ -1,11 +1,9 @@
 package kono.ipc
 
-import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.Moshi
 import kono.app.KonoApplication
-import okio.Buffer
 
-typealias JsFunction = (Moshi, RunFunctionRequest, JsonWriter, FunctionContext) -> Unit
+typealias JsFunction = (Moshi, RunFunctionRequest, FunctionContext) -> String
 
 fun functionHandler(
     app: KonoApplication,
@@ -30,11 +28,8 @@ class FunctionHandler(
             successId = request.callbackId,
             failedId = request.errorId
         ) {
-            val outputString = Buffer()
-            val output = JsonWriter.of(outputString)
             val runFunction = functions[request.function] ?: error("No such function: ${request.function}")
-            runFunction(app.moshi, request, output, context)
-            outputString.readString(Charsets.UTF_8)
+            runFunction(app.moshi, request, context)
         }
     }
 }

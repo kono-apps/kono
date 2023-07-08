@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     kotlin("jvm")
 }
@@ -14,11 +16,6 @@ dependencies {
     implementation(project(":app"))
 }
 
-kotlin {
-    sourceSets.main {
-        kotlin.srcDir("build/generated/ksp/main/kotlin")
-    }
-    sourceSets.test {
-        kotlin.srcDir("build/generated/ksp/test/kotlin")
-    }
+tasks.withType(KotlinCompile::class).all {
+    kotlinOptions.freeCompilerArgs = listOf("-Xcontext-receivers")
 }

@@ -1,1 +1,2 @@
-kono.codegen.KonoProcessorProvider
+kono.codegen.functions.FunctionProcessorProvider
+kono.codegen.event.EventProcessorProvider
