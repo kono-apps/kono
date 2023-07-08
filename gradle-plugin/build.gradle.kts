@@ -1,6 +1,6 @@
 plugins {
     kotlin("jvm")
-    `java-gradle-plugin`
+    id("com.gradle.plugin-publish") version "1.1.0"
     `maven-publish`
 }
 
@@ -12,14 +12,19 @@ publishing {
     }
 }
 
-group = "kono"
+group = "kono.app"
 version = "0.1"
 
 gradlePlugin {
+    website.set("https://github.com/kono-apps/kono")
+    vcsUrl.set("https://github.com/kono-apps/kono.git")
     plugins {
         create("kono") {
             id = "kono.app"
+            displayName = "Kono Apps"
             implementationClass = "kono.gradle.KonoGradlePlugin"
+            description = "A Gradle plugin for setting up a Kono workspace"
+            tags.set(listOf("kono", "kono-apps", "desktop", "cross-platform"))
         }
     }
 }
@@ -31,7 +36,7 @@ repositories {
 
 dependencies {
     implementation("com.google.devtools.ksp:symbol-processing-gradle-plugin:1.8.0-1.0.9")
-    implementation("gradle.plugin.com.github.jengelman.gradle.plugins:shadow:7.0.0")
+    implementation("gradle.plugin.com.github.johnrengelman:shadow:7.1.2")
 }
 
 kotlin {
