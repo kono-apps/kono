@@ -1,6 +1,5 @@
 plugins {
     kotlin("jvm")
-    kotlin("plugin.serialization") version "1.8.21"
 }
 
 repositories {
@@ -8,7 +7,7 @@ repositories {
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-hocon:1.5.1")
+    implementation("com.squareup.moshi:moshi:1.14.0")
     implementation("com.squareup:kotlinpoet:1.14.2")
     implementation("com.squareup:kotlinpoet-ksp:1.14.2")
     implementation("com.google.devtools.ksp:symbol-processing-api:1.8.20-RC-1.0.9")
