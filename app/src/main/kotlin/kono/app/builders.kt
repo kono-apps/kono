@@ -1,8 +1,6 @@
 package kono.app
 
 import kono.generated.GeneratedAppContext
-import kono.webview.WebViewBuilder
-import java.io.File
 
 fun runKonoApplication(
     context: KonoApplicationContext = GeneratedAppContext,
