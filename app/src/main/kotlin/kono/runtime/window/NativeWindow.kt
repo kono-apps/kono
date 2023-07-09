@@ -5,4 +5,4 @@ import kono.runtime.natives.WindowPtr
 /**
  * Represents a window that is controlled by an [EventLoop].
  */
-internal class NativeWindow(internal val ptr: WindowPtr)
+class NativeWindow internal constructor(internal val ptr: WindowPtr)
