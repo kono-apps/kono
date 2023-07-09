@@ -11,6 +11,6 @@ fun createWebViewWindow(window: Window, webView: WebView): WebViewWindow {
  * Represents a webview bound to a window.
  */
 class WebViewWindow(
-    val window: Window,
-    val webView: WebView,
+    private val window: Window,
+    private val webView: WebView,
 ) : WebView by webView, Window by window
