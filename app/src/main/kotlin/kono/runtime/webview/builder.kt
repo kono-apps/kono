@@ -18,7 +18,7 @@ private val RunningDirectory by lazy {
 /**
  * Creates a new WebView that is bound to the given window
  */
-fun webView(
+fun buildWebView(
     nativeWindow: NativeWindow,
     runningDir: File = RunningDirectory,
     block: WebViewBuilder.() -> Unit
@@ -29,7 +29,7 @@ fun webView(
 }
 
 /**
- * A webview builder. This should only be created from [webView]
+ * A webview builder. This should only be created from [buildWebView]
  * as it properly manages the internal pointers.
  *
  * Implementation note: Calling [WebViewBuilder.build] invalidates
