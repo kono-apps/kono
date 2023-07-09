@@ -2,6 +2,7 @@ package kono.ipc
 
 import kono.app.KonoApplication
 import kono.app.currentRunningApp
+import kono.display.WebViewWindow
 import kono.runtime.webview.NativeWebView
 import kono.runtime.window.EventLoop
 import kono.runtime.window.NativeWindow
@@ -31,8 +32,7 @@ import kono.runtime.window.NativeWindow
  * ```
  */
 class FunctionContext(
-    val nativeWebView: NativeWebView? = null,
-    val nativeWindow: NativeWindow? = null,
+    val window: WebViewWindow,
     val app: KonoApplication = currentRunningApp(),
     val eventLoop: EventLoop? = null,
 )

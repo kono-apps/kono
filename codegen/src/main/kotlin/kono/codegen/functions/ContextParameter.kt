@@ -3,9 +3,9 @@ package kono.codegen.functions
 import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.asTypeName
 import kono.app.KonoApplication
+import kono.display.WebViewWindow
 import kono.ipc.FunctionContext
 import kono.runtime.webview.NativeWebView
-import kono.runtime.window.NativeWindow
 import kotlin.reflect.KClass
 
 /**
@@ -23,14 +23,9 @@ enum class ContextParameter(
     CONTEXT(FunctionContext::class),
 
     /**
-     * The current webview
-     */
-    WEBVIEW(NativeWebView::class, "webView"),
-
-    /**
      * The current window
      */
-    WINDOW(NativeWindow::class, "window"),
+    WINDOW(WebViewWindow::class, "window"),
 
     /**
      * The application instance

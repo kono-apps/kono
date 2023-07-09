@@ -8,6 +8,9 @@ import kono.runtime.window.NativeWindow
 import org.intellij.lang.annotations.Language
 import java.io.File
 
+/**
+ * Represents the currently running directory
+ */
 private val RunningDirectory by lazy {
     File(System.getProperty("user.dir"))
 }
