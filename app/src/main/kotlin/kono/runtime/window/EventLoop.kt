@@ -1,4 +1,4 @@
-package kono.window
+package kono.runtime.window
 
 import kono.runtime.natives.EventLoopPtr
 import kono.runtime.natives.nativeRuntime

@@ -1,10 +1,10 @@
-package kono.webview
+package kono.runtime.webview
 
 import kono.asset.Asset
 import kono.runtime.natives.nativeRuntime
 import kono.runtime.natives.NativeRuntime
 import kono.runtime.natives.WebViewBuilderPtr
-import kono.window.Window
+import kono.runtime.window.NativeWindow
 import org.intellij.lang.annotations.Language
 import java.io.File
 
@@ -16,11 +16,11 @@ private val RunningDirectory by lazy {
  * Creates a new WebView that is bound to the given window
  */
 fun webView(
-    window: Window,
+    nativeWindow: NativeWindow,
     runningDir: File = RunningDirectory,
     block: WebViewBuilder.() -> Unit
-): WebView {
-    val builder = WebViewBuilder(window)
+): NativeWebView {
+    val builder = WebViewBuilder(nativeWindow)
     builder.block()
     return builder.build(runningDir)
 }
@@ -33,13 +33,13 @@ fun webView(
  * the [WebViewBuilder.builderPtr]. Any further access to it can lead
  * to errors, therefore a WindowBuilder should not be re-used.
  */
-class WebViewBuilder internal constructor(private val window: Window) {
+class WebViewBuilder internal constructor(private val nativeWindow: NativeWindow) {
 
     /**
      * This pointer must be updated every time the value change, in
      * which case, you should use [update] instead of manually updating it.
      */
-    private var builderPtr = nativeRuntime { window.ptr.createWebViewBuilder() }
+    private var builderPtr = nativeRuntime { nativeWindow.ptr.createWebViewBuilder() }
 
     /**
      * Whether this builder has been consumed yet or not. This becomes true
@@ -124,7 +124,7 @@ class WebViewBuilder internal constructor(private val window: Window) {
     /**
      * Builds the WebView
      */
-    fun build(runningDir: File): WebView {
+    fun build(runningDir: File): NativeWebView {
         if (consumed)
             error("You cannot re-use the same builder twice!")
         consumed = true
@@ -133,6 +133,6 @@ class WebViewBuilder internal constructor(private val window: Window) {
                 webViewBuild(runningDir.absolutePath)
             }
         }
-        return WebView(webViewPtr)
+        return NativeWebView(webViewPtr)
     }
 }

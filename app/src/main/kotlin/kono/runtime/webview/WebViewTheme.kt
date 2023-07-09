@@ -1,4 +1,4 @@
-package kono.webview
+package kono.runtime.webview
 
 enum class WebViewTheme {
 

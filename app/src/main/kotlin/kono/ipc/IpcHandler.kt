@@ -11,15 +11,15 @@ class IpcHandler(private val app: KonoApplication) {
     ) {
         when (val requestType = app.moshi.adapterOf<IPCRequest>().fromJson(request)!!) {
             is RunFunctionRequest -> {
-                app.functions.call(requestType, context) { context.webView!!.eval(it) }
+                app.functions.call(requestType, context) { context.nativeWebView!!.eval(it) }
             }
 
             is EmitEventRequest -> {
-                app.events.handleEmit(requestType, context) { context.webView!!.eval(it) }
+                app.events.handleEmit(requestType, context) { context.nativeWebView!!.eval(it) }
             }
 
             is RegisterListenerRequest -> {
-                app.events.handleRegisterListener(requestType) { context.webView!!.eval(it) }
+                app.events.handleRegisterListener(requestType) { context.nativeWebView!!.eval(it) }
             }
         }
     }

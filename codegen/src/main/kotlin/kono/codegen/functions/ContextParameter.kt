@@ -4,8 +4,8 @@ import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.asTypeName
 import kono.app.KonoApplication
 import kono.ipc.FunctionContext
-import kono.webview.WebView
-import kono.window.Window
+import kono.runtime.webview.NativeWebView
+import kono.runtime.window.NativeWindow
 import kotlin.reflect.KClass
 
 /**
@@ -25,12 +25,12 @@ enum class ContextParameter(
     /**
      * The current webview
      */
-    WEBVIEW(WebView::class, "webView"),
+    WEBVIEW(NativeWebView::class, "webView"),
 
     /**
      * The current window
      */
-    WINDOW(Window::class, "window"),
+    WINDOW(NativeWindow::class, "window"),
 
     /**
      * The application instance

@@ -4,16 +4,26 @@ import com.squareup.moshi.Moshi
 import kono.asset.AssetHandler
 import kono.ipc.FunctionContext
 import kono.ipc.IpcHandler
-import kono.webview.WebView
-import kono.webview.webView
-import kono.window.EventLoop
-import kono.window.Window
-import kono.window.window
+import kono.runtime.webview.NativeWebView
+import kono.runtime.webview.webView
+import kono.runtime.window.EventLoop
+import kono.runtime.window.NativeWindow
+import kono.runtime.window.window
 
+/**
+ * Represents the currently running app
+ */
 private lateinit var app: KonoApplication
 
+/**
+ * Returns the currently running app. This will throw an error
+ * if no app has been created yet
+ */
 fun currentRunningApp() = app
 
+/**
+ * Represents a Kono application.
+ */
 class KonoApplication(
     context: KonoApplicationContext,
     private val config: KonoConfig,
@@ -32,12 +42,12 @@ class KonoApplication(
     private val ipcHandler = IpcHandler(this)
 
     fun start() {
-        var webView: WebView? = null
+        var nativeWebView: NativeWebView? = null
         val eventLoop: EventLoop?
-        val window: Window?
+        val nativeWindow: NativeWindow?
 
         eventLoop = EventLoop()
-        window = window(eventLoop) {
+        nativeWindow = window(eventLoop) {
             title(config.window.title)
             fullScreen(config.window.fullScreen)
             resizable(config.window.resizable)
@@ -45,15 +55,15 @@ class KonoApplication(
             closable(config.window.closable)
             size(width = config.window.width, height = config.window.height)
         }
-        webView = webView(window) {
+        nativeWebView = webView(nativeWindow) {
             url("kono://localhost/")
             addCustomProtocol("kono") { path ->
                 assets.loadEmbeddedAsset(path)
             }
             addIpcHandler { request ->
                 val context = FunctionContext(
-                    webView = webView!!,
-                    window = window,
+                    nativeWebView = nativeWebView!!,
+                    nativeWindow = nativeWindow,
                     app = this@KonoApplication,
                     eventLoop = eventLoop,
                 )

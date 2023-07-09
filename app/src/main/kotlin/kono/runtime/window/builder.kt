@@ -1,4 +1,4 @@
-package kono.window
+package kono.runtime.window
 
 import kono.runtime.natives.NativeRuntime
 import kono.runtime.natives.WindowBuilderPtr
@@ -7,7 +7,7 @@ import kono.runtime.natives.nativeRuntime
 /**
  * Creates a new Window to be run on the event loop
  */
-fun window(eventLoop: EventLoop, block: WindowBuilder.() -> Unit): Window {
+fun window(eventLoop: EventLoop, block: WindowBuilder.() -> Unit): NativeWindow {
     val builder = WindowBuilder()
     builder.block()
     return builder.build(eventLoop)
@@ -91,11 +91,11 @@ class WindowBuilder internal constructor() {
     }
 
     /**
-     * Constructs a [Window] from this builder.
+     * Constructs a [NativeWindow] from this builder.
      *
      * Important note: This will invalidate the builder pointer
      */
-    fun build(eventLoop: EventLoop): Window {
+    fun build(eventLoop: EventLoop): NativeWindow {
         if (consumed)
             error("You cannot re-use the same builder twice!")
         consumed = true
@@ -104,7 +104,7 @@ class WindowBuilder internal constructor() {
                 windowBuild(eventLoop.ptr)
             }
         }
-        return Window(windowPtr)
+        return NativeWindow(windowPtr)
     }
 
 }

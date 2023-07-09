@@ -2,9 +2,9 @@ package kono.ipc
 
 import kono.app.KonoApplication
 import kono.app.currentRunningApp
-import kono.webview.WebView
-import kono.window.EventLoop
-import kono.window.Window
+import kono.runtime.webview.NativeWebView
+import kono.runtime.window.EventLoop
+import kono.runtime.window.NativeWindow
 
 /**
  * Represents the context in which a function, such as a listener
@@ -31,8 +31,8 @@ import kono.window.Window
  * ```
  */
 class FunctionContext(
-    val webView: WebView? = null,
-    val window: Window? = null,
+    val nativeWebView: NativeWebView? = null,
+    val nativeWindow: NativeWindow? = null,
     val app: KonoApplication = currentRunningApp(),
     val eventLoop: EventLoop? = null,
 )
