@@ -48,7 +48,7 @@ class EventHandler(private val app: KonoApplication) {
         listener(id, handler)
     }
 
-    fun <T : Any> emit(event: T, context: FunctionContext = FunctionContext()) {
+    fun <T : Any> emit(event: T, context: FunctionContext) {
         val id = event.javaClass.id().lowercase()
         backendListeners.getOrDefault(id, emptyList()).forEach {
             @Suppress("UNCHECKED_CAST")

@@ -4,7 +4,10 @@ import kono.runtime.natives.WebViewPtr
 import kono.runtime.natives.nativeRuntime
 import org.intellij.lang.annotations.Language
 
-class NativeWebView internal constructor(private val ptr: WebViewPtr) {
+/**
+ * Represents a platform webview
+ */
+class WebView internal constructor(private val ptr: WebViewPtr) {
 
     /**
      * Evaluate and run JavaScript code.

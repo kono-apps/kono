@@ -71,7 +71,7 @@ fun ExportedParameter.getAccessProperty() = buildCodeBlock {
         "functionData.$name"
     add(access)
 
-    if (contextItem?.isNullable == true)
+    if (contextItem?.isNullable == true && !isNullable)
         add(" ?: error(%S)", "unable to fetch value '$name' from the context (it was null)")
     else if (hasDefault && !isNullable && !isPrimitive)
         add(" ?: error(%S)", "null was provided for non-null parameter '$name'")

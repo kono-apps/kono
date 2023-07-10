@@ -24,3 +24,13 @@ tasks.withType<KotlinCompile> {
         jvmTarget = "11"
     }
 }
+
+// Optional: Add generated items to source
+kotlin {
+    sourceSets.main {
+        kotlin.srcDir("build/generated/ksp/main/kotlin")
+    }
+    sourceSets.test {
+        kotlin.srcDir("build/generated/ksp/test/kotlin")
+    }
+}

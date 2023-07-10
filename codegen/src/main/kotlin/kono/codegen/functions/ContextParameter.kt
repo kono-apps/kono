@@ -5,7 +5,8 @@ import com.squareup.kotlinpoet.asTypeName
 import kono.app.KonoApplication
 import kono.display.WebViewWindow
 import kono.ipc.FunctionContext
-import kono.runtime.webview.NativeWebView
+import kono.runtime.webview.WebView
+import kono.runtime.window.Window
 import kotlin.reflect.KClass
 
 /**
@@ -14,7 +15,7 @@ import kotlin.reflect.KClass
 enum class ContextParameter(
     type: KClass<*>,
     access: String = "",
-    val isNullable: Boolean = true,
+    val isNullable: Boolean = false,
 ) {
 
     /**
@@ -23,14 +24,24 @@ enum class ContextParameter(
     CONTEXT(FunctionContext::class),
 
     /**
+     * The current webview window
+     */
+    WEBVIEW_WINDOW(WebViewWindow::class, "window"),
+
+    /**
      * The current window
      */
-    WINDOW(WebViewWindow::class, "window"),
+    WINDOW(Window::class, "window.window"),
+
+    /**
+     * The current window
+     */
+    WEBVIEW(WebView::class, "window.webView"),
 
     /**
      * The application instance
      */
-    APP(KonoApplication::class, "app", isNullable = false);
+    APP(KonoApplication::class, "app");
 
     /**
      * The type representing this context parameter

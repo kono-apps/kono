@@ -4,7 +4,7 @@ import kono.asset.Asset
 import kono.runtime.natives.nativeRuntime
 import kono.runtime.natives.NativeRuntime
 import kono.runtime.natives.WebViewBuilderPtr
-import kono.runtime.window.NativeWindow
+import kono.runtime.window.Window
 import org.intellij.lang.annotations.Language
 import java.io.File
 
@@ -19,11 +19,11 @@ private val RunningDirectory by lazy {
  * Creates a new WebView that is bound to the given window
  */
 fun buildWebView(
-    nativeWindow: NativeWindow,
+    window: Window,
     runningDir: File = RunningDirectory,
-    block: WebViewBuilder.() -> Unit
-): NativeWebView {
-    val builder = WebViewBuilder(nativeWindow)
+    block: WebViewBuilder.() -> Unit,
+): WebView {
+    val builder = WebViewBuilder(window)
     builder.block()
     return builder.build(runningDir)
 }
@@ -36,13 +36,13 @@ fun buildWebView(
  * the [WebViewBuilder.builderPtr]. Any further access to it can lead
  * to errors, therefore a WindowBuilder should not be re-used.
  */
-class WebViewBuilder internal constructor(private val nativeWindow: NativeWindow) {
+class WebViewBuilder internal constructor(private val window: Window) {
 
     /**
      * This pointer must be updated every time the value change, in
      * which case, you should use [update] instead of manually updating it.
      */
-    private var builderPtr = nativeRuntime { nativeWindow.ptr.createWebViewBuilder() }
+    private var builderPtr = nativeRuntime { window.ptr.createWebViewBuilder() }
 
     /**
      * Whether this builder has been consumed yet or not. This becomes true
@@ -92,10 +92,10 @@ class WebViewBuilder internal constructor(private val nativeWindow: NativeWindow
      */
     fun addIpcHandler(handler: (message: String) -> Unit) = update {
         webViewAddIPCHandler { message ->
-            runCatching {
+            try {
                 handler(message)
-            }.recover {
-                it.printStackTrace()
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
     }
@@ -127,7 +127,7 @@ class WebViewBuilder internal constructor(private val nativeWindow: NativeWindow
     /**
      * Builds the WebView
      */
-    fun build(runningDir: File): NativeWebView {
+    fun build(runningDir: File): WebView {
         if (consumed)
             error("You cannot re-use the same builder twice!")
         consumed = true
@@ -136,6 +136,6 @@ class WebViewBuilder internal constructor(private val nativeWindow: NativeWindow
                 webViewBuild(runningDir.absolutePath)
             }
         }
-        return NativeWebView(webViewPtr)
+        return WebView(webViewPtr)
     }
 }

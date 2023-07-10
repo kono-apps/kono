@@ -1,6 +1,7 @@
 package kono.app
 
 import com.squareup.moshi.JsonClass
+import kono.runtime.window.WindowTheme
 
 @JsonClass(generateAdapter = true)
 data class KonoConfig(
@@ -27,7 +28,8 @@ data class WindowConfig(
     val maximized: Boolean = true,
     val closable: Boolean = true,
     val width: Int = 800,
-    val height: Int = 600
+    val height: Int = 600,
+    val theme: WindowTheme? = null
 )
 
 @JsonClass(generateAdapter = true)
