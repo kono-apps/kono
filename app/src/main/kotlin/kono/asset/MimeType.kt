@@ -9,6 +9,7 @@ enum class MimeType(val mimeType: String, vararg val extensions: String) {
     MP3("audio/mp3", "mp3"),
     SVG("image/svg+xml", "svg"),
     ICO("image/vnd.microsoft.icon", "ico"),
+    WASM("application/wasm", "wasm"),
     BINARY("application/octet-stream", "bin"),
     RTF("application/rtf", "rtf"),
     JSON("application/json", "json"),
