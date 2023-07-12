@@ -20,10 +20,6 @@ class WindowHandler(private val app: KonoApplication) {
     private val assets = AssetHandler(landingAsset = app.config.build.landingAsset)
     private val windows = mutableMapOf<Int, WebViewWindow>()
 
-    init {
-        spawnWebView()
-    }
-
     /**
      * Creates a new webview on the given starting location
      */
