@@ -1,14 +1,13 @@
- package kono.sample
+package kono.sample
 
 import com.squareup.moshi.JsonClass
-import kono.app.KonoApplication
 import kono.export.ExportFunction
+import kono.json.encodeJson
 import kono.runtime.webview.WebView
-import kotlin.concurrent.thread
 
 @ExportFunction
 fun ping(value: String = "", webView: WebView) {
-    webView.eval("console.log('$value')")
+    webView.eval("console.log(${value.encodeJson()})")
 }
 
 /**
@@ -17,8 +16,7 @@ fun ping(value: String = "", webView: WebView) {
  * Reverses the given string
  */
 @ExportFunction
-fun reverse(name: String = "Kono", app: KonoApplication): String {
-    thread(start = true) { app.windows.spawnWebView() }
+fun reverse(name: String = "Kono"): String {
     return name.reversed()
 }
 

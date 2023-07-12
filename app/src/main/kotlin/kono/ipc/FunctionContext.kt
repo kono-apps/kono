@@ -16,16 +16,14 @@ import kono.runtime.window.EventLoop
  * ```kt
  * @ExportFunction
  * fun ping(ping: String, webView: WebView) {
- *    // Note: It's not recommended to actually pass strings like that
- *    // directly, but for the sake of the example!
- *    webView.eval("console.log('$ping')")
+ *    webView.eval("console.log(${ping.encodeToJson()})")
  * }
  * ```
  * or:
  * ```kt
  * @ExportFunction
  * fun ping(ping: String, context: FunctionContext) {
- *    context.webView.eval("console.log('$ping')")
+ *    context.webView.eval("console.log(${ping.encodeToJson()})")
  * }
  * ```
  */

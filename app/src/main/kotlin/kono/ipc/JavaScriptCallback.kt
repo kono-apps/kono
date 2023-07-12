@@ -1,6 +1,7 @@
 package kono.ipc
 
 import com.squareup.moshi.JsonWriter
+import kono.json.encodeJson
 import okio.Buffer
 
 /**
@@ -19,9 +20,6 @@ fun runJS(
     } catch (e: Exception) {
         // We pass the output once again to a String adapter, so that any
         // quotation marks as respected and escaped as needed.
-        Buffer().also {
-            JsonWriter.of(it).value(e.message)
-            eval("window._${failedId}(${it.readString(Charsets.UTF_8)})")
-        }
+        eval("window._${failedId}(${e.message?.encodeJson()})")
     }
 }
