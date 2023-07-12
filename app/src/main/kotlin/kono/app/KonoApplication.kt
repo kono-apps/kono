@@ -36,6 +36,7 @@ class KonoApplication(
     val windows = WindowHandler(this)
 
     fun start() {
+        windows.spawnWebView()
         windows.show()
     }
 }
