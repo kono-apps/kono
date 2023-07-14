@@ -36,7 +36,7 @@ kotlin {
 }
 
 tasks.withType(KotlinCompile::class).all {
-    kotlinOptions.freeCompilerArgs = listOf("-Xcontext-receivers")
+    kotlinOptions.freeCompilerArgs = listOf("-Xcontext-receivers", "-Xjvm-default=all")
 }
 
 publishing {
