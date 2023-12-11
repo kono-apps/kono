@@ -8,9 +8,9 @@ import kono.runtime.webview.WebViewBuilder
 import kono.runtime.webview.buildWebView
 import kono.runtime.webview.toWebViewTheme
 import kono.runtime.window.EventLoop
+import kono.runtime.window.EventReceiver
 import kono.runtime.window.toWindow
 import java.util.concurrent.atomic.AtomicInteger
-import kotlin.concurrent.thread
 
 class WindowHandler(private val app: KonoApplication) {
 
@@ -23,7 +23,7 @@ class WindowHandler(private val app: KonoApplication) {
     /**
      * Creates a new webview on the given starting location
      */
-    fun spawnWebView(location: String = "", buildFun: WebViewBuilder.() -> Unit = {}): WebViewWindow {
+    fun spawnWebView(location: String = "", buildFun: WebViewBuilder.() -> Unit = {}) {
         val window = app.config.window.toWindow(eventLoop = loop)
         var context: FunctionContext? = null
         val webView = buildWebView(window) {
@@ -44,11 +44,13 @@ class WindowHandler(private val app: KonoApplication) {
         )
         context = FunctionContext(webViewWindow, app, loop)
         windows[counter.getAndIncrement()] = webViewWindow
-        return webViewWindow
     }
 
     fun show() {
-        loop.run()
+        val eventReceiver = EventReceiver()
+        eventReceiver.onInit {
+            println("Hello from Kotlin!")
+        }
+        loop.run(eventReceiver)
     }
-
 }

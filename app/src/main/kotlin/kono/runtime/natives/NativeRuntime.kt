@@ -11,10 +11,27 @@ typealias WebViewPtr = Pointer
 typealias WebViewBuilderPtr = Pointer
 typealias EventLoopPtr = Pointer
 typealias AssetPtr = Pointer
+typealias EventReceiverPtr = Pointer
 
+/**
+ * Bindings to the Rust functions exposed from the native runtime
+ */
 interface NativeRuntime : Library {
 
+    /**
+     * Creates a new pointer to an [kono.runtime.window.EventLoop]
+     */
     fun createEventLoop(): EventLoopPtr
+
+    /**
+     * Creates a new pointer to an [kono.runtime.window.EventReceiver]
+     */
+    fun createEventReceiver(): EventReceiverPtr
+
+    /**
+     * Sets the initialization callback function for an [EventReceiverPtr]
+     */
+    fun EventReceiverPtr.setInit(init: InitCallback)
 
     fun createWindowBuilder(): WindowBuilderPtr
 
@@ -49,12 +66,12 @@ interface NativeRuntime : Library {
      * method
      */
     fun WebViewBuilderPtr.webViewSetURL(
-        url: String
+        url: String,
     ): WebViewBuilderPtr
 
     fun WebViewBuilderPtr.webViewAddCustomProtocol(
         name: String,
-        handler: CustomProtocolCallback
+        handler: CustomProtocolCallback,
     ): WebViewBuilderPtr
 
     fun WebViewPtr.webViewEval(
@@ -63,30 +80,30 @@ interface NativeRuntime : Library {
 
     fun WebViewPtr.webViewEvalWithCallback(
         js: String,
-        callback: EvalCallback
+        callback: EvalCallback,
     ): WebViewBuilderPtr
 
     fun WebViewBuilderPtr.webViewSetDevTools(
-        devTools: Boolean
+        devTools: Boolean,
     ): WebViewBuilderPtr
 
     fun WebViewBuilderPtr.webViewAddInitScript(
-        script: String
+        script: String,
     ): WebViewBuilderPtr
 
     fun WebViewBuilderPtr.webViewSetHTML(
-        html: String
+        html: String,
     ): WebViewBuilderPtr
 
     fun WebViewBuilderPtr.webViewAddIPCHandler(
-        handler: IPCHandler
+        handler: IPCHandler,
     ): WebViewBuilderPtr
 
     fun WebViewBuilderPtr.webViewBuilderSetTheme(theme: Byte): WebViewPtr
 
     fun WebViewBuilderPtr.webViewBuild(runningDirectory: String): WebViewPtr
 
-    fun EventLoopPtr.eventLoopRun(onInit: InitCallback)
+    fun EventLoopPtr.eventLoopRun(prop: EventReceiverPtr)
 
     fun createAsset(mimeType: String, content: ByteArray, contentLen: Int): AssetPtr
 

@@ -17,11 +17,9 @@ class EventLoop {
     /**
      * Runs the event loop. This method blocks the thread
      */
-    fun run(onInit: () -> Unit = {}) {
+    fun run(eventReceiver: EventReceiver) {
         nativeRuntime {
-            ptr.eventLoopRun {
-                runCatching(onInit).recover { it.printStackTrace() }
-            }
+            ptr.eventLoopRun(eventReceiver.ptr)
         }
     }
 }
