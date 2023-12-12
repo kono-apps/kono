@@ -1,9 +1,6 @@
 package kono.app
 
-import com.squareup.moshi.Moshi
-import kono.asset.AssetHandler
 import kono.display.WindowHandler
-import kono.ipc.IpcHandler
 
 /**
  * Represents the currently running app
@@ -22,7 +19,6 @@ fun currentRunningApp() = app
 class KonoApplication(
     val context: KonoApplicationContext,
     val config: KonoConfig,
-    val moshi: Moshi,
 ) {
 
     init {

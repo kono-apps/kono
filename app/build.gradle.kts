@@ -2,6 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm")
+    kotlin("plugin.serialization") version "1.8.0"
     id("com.google.devtools.ksp") version "1.8.0-1.0.9"
     signing
     `maven-publish`
@@ -26,9 +27,8 @@ dependencies {
     // JNA for accessing native APIs
     implementation("net.java.dev.jna:jna:5.13.0")
 
-    // Moshi for handling JSON
-    implementation("com.squareup.moshi:moshi:1.14.0")
-    ksp("com.squareup.moshi:moshi-kotlin-codegen:1.14.0")
+    // kotlinx.serialization for JSON
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2")
 }
 
 kotlin {

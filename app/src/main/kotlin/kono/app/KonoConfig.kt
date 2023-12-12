@@ -1,9 +1,9 @@
 package kono.app
 
-import com.squareup.moshi.JsonClass
 import kono.runtime.window.WindowTheme
+import kotlinx.serialization.Serializable
 
-@JsonClass(generateAdapter = true)
+@Serializable
 data class KonoConfig(
     val app: AppConfig,
     val window: WindowConfig = WindowConfig(
@@ -12,7 +12,7 @@ data class KonoConfig(
     val build: BuildConfig = BuildConfig()
 )
 
-@JsonClass(generateAdapter = true)
+@Serializable
 data class AppConfig(
     val name: String,
     val authors: List<String>,
@@ -20,7 +20,7 @@ data class AppConfig(
     val debug: Boolean = false
 )
 
-@JsonClass(generateAdapter = true)
+@Serializable
 data class WindowConfig(
     val title: String,
     val fullScreen: Boolean = false,
@@ -32,7 +32,7 @@ data class WindowConfig(
     val theme: WindowTheme? = null
 )
 
-@JsonClass(generateAdapter = true)
+@Serializable
 data class BuildConfig(
     val landingAsset: String = "index.html"
 )

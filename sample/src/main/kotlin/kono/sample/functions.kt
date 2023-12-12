@@ -1,7 +1,7 @@
 package kono.sample
 
-import com.squareup.moshi.JsonClass
 import kono.export.ExportFunction
+import kotlinx.serialization.Serializable
 
 @ExportFunction
 fun ping(value: String = ""): String {
@@ -34,7 +34,7 @@ fun greet(user: String, greeting: String = "Hello, "): String {
 // using `moshi(...)`.
 //
 // The class does not need to be a data class
-@JsonClass(generateAdapter = true)
+@Serializable
 data class Greeting(
     val user: String,
     val greeting: String = "Hello, ",

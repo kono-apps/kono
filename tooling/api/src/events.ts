@@ -3,7 +3,7 @@ import {callToBackend, createCallback} from "./callback";
 export async function emit<T>(id: string, event: T): Promise<void> {
     return callToBackend((callbackId, errorId) => {
         const json = {
-            "request": "emitEvent",
+            "type": "emitEvent",
             "event": id,
             "callbackId": callbackId,
             "errorId": errorId,
@@ -21,7 +21,7 @@ export async function registerListener<T>(event: string, callback: (event: T) =>
         }, false)
 
         const json = {
-            "request": "registerListener",
+            "type": "registerListener",
             "event": event,
             "listenerCallbackId": listenerCallbackId,
             "registerSuccessCallbackId": callbackId,

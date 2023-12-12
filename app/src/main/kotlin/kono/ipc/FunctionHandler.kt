@@ -1,9 +1,8 @@
 package kono.ipc
 
-import com.squareup.moshi.Moshi
 import kono.app.KonoApplication
 
-typealias JsFunction = (Moshi, RunFunctionRequest, FunctionContext) -> String
+typealias JsFunction = (RunFunctionRequest, FunctionContext) -> String
 
 fun functionHandler(
     app: KonoApplication,
@@ -29,7 +28,7 @@ class FunctionHandler(
             failedId = request.errorId
         ) {
             val runFunction = functions[request.function] ?: error("No such function: ${request.function}")
-            runFunction(app.moshi, request, context)
+            runFunction(request, context)
         }
     }
 }

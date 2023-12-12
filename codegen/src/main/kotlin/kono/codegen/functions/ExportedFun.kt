@@ -4,7 +4,6 @@ import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ksp.addOriginatingKSFile
 import com.squareup.kotlinpoet.ksp.toTypeName
-import com.squareup.moshi.Moshi
 import kono.codegen.util.*
 import kono.ipc.FunctionContext
 import kono.ipc.RunFunctionRequest
@@ -110,7 +109,6 @@ val ExportedFun.unnamedInvokeArgs
 fun ExportedFun.addTo(file: FileSpec.Builder) {
     val funBuilder = FunSpec.builder(name)
         .addOriginatingKSFile(function.containingFile!!)
-        .addParameter("moshi", Moshi::class)
         .addParameter("request", RunFunctionRequest::class)
         .addParameter("context", FunctionContext::class)
         .returns(String::class)
@@ -129,7 +127,7 @@ fun ExportedFun.addTo(file: FileSpec.Builder) {
     file.addType(jsonClass)
 
     if (takesArgs)
-        code.addStatement("val functionData = moshi.adapterOf<%L>().fromJsonValue(request.data)!!", jsonClassName)
+        code.addStatement("val functionData = Json.decodeFromJsonElement(serializer<%L>(), request.data)", jsonClassName)
 
     // No default arguments. Easy case
     if (!containsDefaultParameters) {
@@ -196,6 +194,7 @@ private fun CodeBlock.Builder.createFunctionWithDefaultArgs(masker: Masker) {
  */
 context(ExportedFun)
 private fun CodeBlock.Builder.elseCallMethodReflectively() {
+    val nullSafeType = safeCastType
     // Not all parameters are passed. Invoke the synthetic method
     // reflectively
     addComment("Different parameters were used. Invoke the synthetic method")
@@ -204,15 +203,15 @@ private fun CodeBlock.Builder.elseCallMethodReflectively() {
             "val result = %L.invoke(null, %L, mask0, DEFAULT_CONSTRUCTOR_MARKER) as %T",
             reflectionPropertyName,
             unnamedInvokeArgs,
-            safeCastType
+            nullSafeType
         )
     else
         addStatement(
             "val result = %L.invoke(null, mask0, DEFAULT_CONSTRUCTOR_MARKER) as %T",
             reflectionPropertyName,
-            safeCastType
+            nullSafeType
         )
-    addStatement("return moshi.adapterOf<%T>().toJson(result)", returnType)
+    addStatement("return Json.encodeToString(serializer<%L>(), result)", nullSafeType)
 
 }
 
@@ -269,7 +268,7 @@ private fun ExportedFun.createReflectionMethodProperty(maskCount: Int): Property
  */
 private fun ExportedFun.createJsonClass(): TypeSpec {
     val builder = TypeSpec.classBuilder(jsonClassName)
-        .addAnnotation(JSON_CLASS_ADAPTER)
+        .addAnnotation(SERIALIZABLE)
 
     val properties = parameters.asSequence().filter { !it.isFromContext }
         .map { it.toJsonConstructorParameter() }
@@ -285,5 +284,5 @@ private fun ExportedFun.createJsonClass(): TypeSpec {
  */
 private fun ExportedFun.callFunction(code: CodeBlock.Builder) {
     code.addStatement("val result = ${qualifiedName}(%L)", namedInvokeArgs)
-    code.addStatement("return moshi.adapterOf<%T>().toJson(result)", returnType)
+    code.addStatement("return Json.encodeToString(serializer<%L>(), result)", returnType)
 }

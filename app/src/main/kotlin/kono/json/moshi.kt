@@ -1,9 +1,7 @@
 package kono.json
 
-import com.squareup.moshi.JsonAdapter
-import com.squareup.moshi.JsonWriter
-import com.squareup.moshi.Moshi
-import okio.Buffer
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 /**
  * Encodes this string as a JSON string. This is useful
@@ -16,12 +14,5 @@ import okio.Buffer
  * if necessary.
  */
 fun String?.encodeJson(): String {
-    val buffer = Buffer()
-    JsonWriter.of(buffer).value(this)
-    return buffer.readString(Charsets.UTF_8)
-}
-
-// A hacky way to get an adapter quickly, without kotlin-reflect
-inline fun <reified T> Moshi.adapterOf(): JsonAdapter<T> {
-    return adapter(typeOf<T>())
+    return Json.encodeToString(this)
 }

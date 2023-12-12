@@ -1,6 +1,6 @@
 {
   "name": "@kono-apps/api",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "type": "module",
   "main": "src/index.ts",
   "description": "A cross-platform framework for building native desktop apps",

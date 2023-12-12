@@ -1,11 +1,11 @@
 package kono.sample
 
-import com.squareup.moshi.JsonClass
 import kono.events.Listener
 import kono.export.ExportEvent
+import kotlinx.serialization.Serializable
 
 @ExportEvent
-@JsonClass(generateAdapter = true)
+@Serializable
 data class SomeEvent(
     val name: String,
 )

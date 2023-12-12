@@ -1,17 +1,18 @@
 package kono.events
 
-import com.squareup.moshi.JsonAdapter
-import com.squareup.moshi.rawType
 import kono.app.KonoApplication
 import kono.export.ExportEvent
 import kono.ipc.EmitEventRequest
 import kono.ipc.FunctionContext
 import kono.ipc.RegisterListenerRequest
 import kono.ipc.runJS
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.serializer
 import kotlin.LazyThreadSafetyMode.NONE
 
 fun Class<*>.inferId(): String {
-    return getAnnotation(ExportEvent::class.java)?.id?.ifBlank { rawType.simpleName } ?: error {
+    return getAnnotation(ExportEvent::class.java)?.id?.ifBlank { simpleName } ?: error {
         "Event $this does not have @Event! Either add @Event or pass the ID manually."
     }
 }
@@ -57,7 +58,7 @@ class EventHandler(private val app: KonoApplication) {
 
         val js = jsListeners.getOrDefault(id, emptyList())
         if (js.isNotEmpty()) {
-            val asJson = app.moshi.adapter(event.javaClass).toJson(event)!!
+            val asJson = Json.encodeToString(serializer(event.javaClass), event)
             js.forEach { it.receive(asJson, context) }
         }
     }
@@ -75,12 +76,11 @@ class EventHandler(private val app: KonoApplication) {
             val id = request.event.lowercase()
 
             val type: Class<*> = idsToType[id] ?: error("Invalid event ID: $id")
-            val deserialized by lazy(NONE) {
-                app.moshi.adapter(type).fromJsonValue(request.data)!!
+            val deserialized: Any by lazy(NONE) {
+                Json.decodeFromJsonElement(serializer(type), request.data)
             }
-            val serialized by lazy(NONE) {
-                @Suppress("UNCHECKED_CAST")
-                (app.moshi.adapter(type) as JsonAdapter<Any>).toJson(deserialized)
+            val serialized: String by lazy(NONE) {
+                Json.encodeToString(request.data)
             }
 
             backendListeners.getOrDefault(id, emptyList()).forEach {

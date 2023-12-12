@@ -15,7 +15,7 @@ export type InvokeArgs = Record<string, unknown>
 export async function invoke<T>(name: string, args: InvokeArgs): Promise<T> {
     return callToBackend<T>((callbackId, errorId) => {
         const json = {
-            "request": "function",
+            "type": "function",
             "callbackId": callbackId,
             "errorId": errorId,
             "function": name,

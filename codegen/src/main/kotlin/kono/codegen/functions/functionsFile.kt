@@ -13,8 +13,8 @@ fun createFunctionHandler(
     codeGenerator.createGeneratedItem(forType = FunctionHandler::class) {
         beginControlFlow("return kono.ipc.functionHandler(app)")
         for ((name, function) in exportedFunctions) {
-            beginControlFlow("this[%S] = { m, r, c -> ", name)
-            addStatement("${function.generatedQualifiedName}(m, r, c)")
+            beginControlFlow("this[%S] = { r, c -> ", name)
+            addStatement("${function.generatedQualifiedName}(r, c)")
             endControlFlow()
         }
         endControlFlow() // functionHandler
@@ -26,7 +26,9 @@ fun createFunctionsFile(
     buildFunc: FileSpec.Builder.() -> Unit,
 ) {
     val builder = FileSpec.builder("kono.generated", "functions")
-        .addImport("kono.json", "adapterOf")
+        .addImport("kotlinx.serialization", "serializer")
+        .addImport("kotlinx.serialization", "encodeToString")
+        .addImport("kotlinx.serialization.json", "Json")
         .addImport("kono.json.internal", "DEFAULT_CONSTRUCTOR_MARKER")
     builder.buildFunc()
     builder.build().writeTo(codeGenerator, aggregating = true)

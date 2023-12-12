@@ -1,40 +1,39 @@
 package kono.ipc
 
-import com.squareup.moshi.Json
-import com.squareup.moshi.JsonClass
-import kono.json.PolymorphicJsonAdapterFactory
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonElement
 
 private typealias CallbackId = Long
 
+@Serializable
 sealed interface IPCRequest
 
-internal val IpcRequestTypeAdapter = PolymorphicJsonAdapterFactory.of(IPCRequest::class.java, "request")
-    .withSubtype(RunFunctionRequest::class.java, "function")
-    .withSubtype(EmitEventRequest::class.java, "emitEvent")
-    .withSubtype(RegisterListenerRequest::class.java, "registerListener")
-
-@JsonClass(generateAdapter = true)
+@Serializable
+@SerialName("function")
 class RunFunctionRequest(
     val callbackId: CallbackId,
     val errorId: CallbackId,
     val function: String,
-    @Json(name = "passed") val passedParameters: MutableList<String>,
-    val data: Any,
+    @SerialName("passed") val passedParameters: MutableList<String>,
+    val data: JsonElement,
 ) : IPCRequest
 
-@JsonClass(generateAdapter = true)
+@Serializable
+@SerialName("emitEvent")
 class EmitEventRequest(
     val event: String,
     val callbackId: CallbackId,
     val errorId: CallbackId,
-    val data: Any,
+    val data: JsonElement,
 ) : IPCRequest
 
-@JsonClass(generateAdapter = true)
+@Serializable
+@SerialName("registerListener")
 class RegisterListenerRequest(
     val event: String,
     val listenerCallbackId: CallbackId,
     val registerErrorCallbackId: CallbackId,
     val registerSuccessCallbackId: CallbackId,
-    val data: Any,
+    val data: JsonElement,
 ) : IPCRequest

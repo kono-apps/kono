@@ -37,6 +37,7 @@ repositories {
 dependencies {
     implementation("com.google.devtools.ksp:symbol-processing-gradle-plugin:1.8.0-1.0.9")
     implementation("gradle.plugin.com.github.johnrengelman:shadow:7.1.2")
+    implementation("org.jetbrains.kotlin:kotlin-serialization:1.8.0")
 }
 
 kotlin {

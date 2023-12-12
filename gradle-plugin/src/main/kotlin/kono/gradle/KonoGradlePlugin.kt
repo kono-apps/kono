@@ -8,6 +8,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaApplication
 import org.gradle.api.plugins.JavaPluginExtension
+import org.jetbrains.kotlinx.serialization.gradle.SerializationGradleSubplugin
 
 interface KonoPluginExtension {
     var mainClass: String?
@@ -16,6 +17,7 @@ interface KonoPluginExtension {
 
 const val KSP_PLUGIN = "com.google.devtools.ksp"
 const val SHADOW_PLUGIN = "com.github.johnrengelman.shadow"
+const val KOTLINX_SERIALIZATION_PLUGIN = "org.jetbrains.kotlin.plugin.serialization"
 
 val Project.kono: KonoPluginExtension get() = extensions.getByName("kono") as KonoPluginExtension
 
@@ -35,13 +37,20 @@ class KonoGradlePlugin : Plugin<Project> {
             project.pluginManager.apply(ShadowPlugin::class.java)
             println("Adding shadow plugin")
         }
+
+        if (!project.pluginManager.hasPlugin(KOTLINX_SERIALIZATION_PLUGIN)) {
+            project.pluginManager.apply(SerializationGradleSubplugin::class.java)
+            println("Adding kotlinx.serialization plugin")
+        }
+
         if (!project.pluginManager.hasPlugin("application")) {
             project.pluginManager.apply("application")
             println("Adding application plugin")
         }
 
         project.addKonoDependencies()
-        project.addMoshiDependencies()
+        project.addKotlinXSerialization()
+
         project.afterEvaluate {
 
             project.extensions.getByType(KspExtension::class.java).apply {
@@ -70,7 +79,6 @@ fun Project.addKonoDependencies() {
     dependencies.add("ksp", project.project(":codegen"))
 }
 
-fun Project.addMoshiDependencies() {
-    dependencies.add("implementation", "com.squareup.moshi:moshi:1.14.0")
-    dependencies.add("ksp", "com.squareup.moshi:moshi-kotlin-codegen:1.14.0")
+fun Project.addKotlinXSerialization() {
+    dependencies.add("implementation", "org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2")
 }

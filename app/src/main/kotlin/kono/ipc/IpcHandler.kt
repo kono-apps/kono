@@ -1,7 +1,7 @@
 package kono.ipc
 
 import kono.app.KonoApplication
-import kono.json.adapterOf
+import kotlinx.serialization.json.Json
 
 class IpcHandler(private val app: KonoApplication) {
 
@@ -9,7 +9,7 @@ class IpcHandler(private val app: KonoApplication) {
         request: String,
         context: FunctionContext,
     ) {
-        when (val requestType = app.moshi.adapterOf<IPCRequest>().fromJson(request)!!) {
+        when (val requestType: IPCRequest = Json.decodeFromString(request)) {
             is RunFunctionRequest -> {
                 app.functions.call(requestType, context) { context.window.webView.eval(it) }
             }
