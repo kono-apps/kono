@@ -22,7 +22,7 @@ class FunctionHandler(
         context: FunctionContext,
         eval: (String) -> Unit,
     ) {
-        runJS(
+        runRequestFromJS(
             eval = eval,
             successId = request.callbackId,
             failedId = request.errorId

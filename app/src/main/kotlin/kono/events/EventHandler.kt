@@ -5,7 +5,7 @@ import kono.export.ExportEvent
 import kono.ipc.EmitEventRequest
 import kono.ipc.FunctionContext
 import kono.ipc.RegisterListenerRequest
-import kono.ipc.runJS
+import kono.ipc.runRequestFromJS
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.serializer
@@ -68,7 +68,7 @@ class EventHandler(private val app: KonoApplication) {
         context: FunctionContext,
         eval: (String) -> Unit,
     ) {
-        runJS(
+        runRequestFromJS(
             eval = eval,
             successId = request.callbackId,
             failedId = request.errorId
@@ -76,19 +76,22 @@ class EventHandler(private val app: KonoApplication) {
             val id = request.event.lowercase()
 
             val type: Class<*> = idsToType[id] ?: error("Invalid event ID: $id")
-            val deserialized: Any by lazy(NONE) {
-                Json.decodeFromJsonElement(serializer(type), request.data)
-            }
-            val serialized: String by lazy(NONE) {
+            val eventAsString: String by lazy(NONE) {
                 Json.encodeToString(request.data)
             }
-
-            backendListeners.getOrDefault(id, emptyList()).forEach {
-                @Suppress("UNCHECKED_CAST")
-                (it as EventListener<Any>).receive(deserialized, context)
+            val eventAsObj: Any by lazy(NONE) {
+                Json.decodeFromJsonElement(serializer(type), request.data)
             }
-            jsListeners.getOrDefault(id, emptyList()).forEach {
-                it.receive(serialized, context)
+            for (listener in backendListeners.getOrDefault(id, emptyList())) {
+                try {
+                    (listener as EventListener<Any>).receive(eventAsObj, context)
+                } catch (e: Throwable) {
+                    System.err.println("Failed to invoke event listener $listener with event $eventAsObj.")
+                    e.printStackTrace()
+                }
+            }
+            for (listener in jsListeners.getOrDefault(id, emptyList())) {
+                listener.receive(eventAsString, context)
             }
             "{}"
         }
@@ -98,7 +101,7 @@ class EventHandler(private val app: KonoApplication) {
         request: RegisterListenerRequest,
         eval: (String) -> Unit,
     ) {
-        runJS(
+        runRequestFromJS(
             eval = eval,
             successId = request.registerSuccessCallbackId,
             failedId = request.registerErrorCallbackId
