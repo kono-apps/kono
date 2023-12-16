@@ -3,7 +3,9 @@ package kono.codegen.functions
 import com.google.devtools.ksp.symbol.KSValueParameter
 import com.squareup.kotlinpoet.ParameterSpec
 import com.squareup.kotlinpoet.buildCodeBlock
+import com.squareup.kotlinpoet.ksp.toAnnotationSpec
 import com.squareup.kotlinpoet.ksp.toTypeName
+import kono.codegen.util.addAnnotations
 import kono.codegen.util.asTypeBlock
 import kono.codegen.util.getEmptyValue
 import kono.codegen.util.isPrimitive
@@ -58,6 +60,7 @@ class ExportedParameter(parameter: KSValueParameter) {
      * name
      */
     val contextItem = ContextParameter.fromType(typeName)
+
 }
 
 /**
@@ -93,6 +96,8 @@ fun ExportedParameter.toJsonConstructorParameter(): ParameterSpec {
         type.makeNullable().toTypeName()
     else
         type.toTypeName()
+
+    paramTypeName.addAnnotations(type.annotations.map { it.toAnnotationSpec() })
 
     val propBuilder = ParameterSpec.builder(name, paramTypeName)
     if (hasDefault)

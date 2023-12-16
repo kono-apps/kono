@@ -1,6 +1,7 @@
 package kono.codegen.util
 
 import com.squareup.kotlinpoet.*
+import java.lang.reflect.Field
 
 val SerializableClass = ClassName("kotlinx.serialization", "Serializable")
 
@@ -39,4 +40,18 @@ fun TypeSpec.Builder.primaryConstructor(parameters: List<ParameterSpec>): TypeSp
     return this
         .primaryConstructor(constructor)
         .addProperties(propertySpecs)
+}
+
+private val annotationsField: Field by lazy {
+    TypeName::class.java
+        .getDeclaredField("annotations")
+        .also { it.isAccessible = true }
+}
+
+@Suppress("UNCHECKED_CAST")
+fun TypeName.addAnnotations(annotationSpec: Sequence<AnnotationSpec>) {
+    val annotations: MutableList<AnnotationSpec> = (annotationsField[this] as List<AnnotationSpec>)
+        .toMutableList()
+    annotations.addAll(annotationSpec)
+    annotationsField[this] = annotations
 }
