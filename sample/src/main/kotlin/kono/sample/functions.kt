@@ -28,12 +28,11 @@ fun greet(user: String, greeting: String = "Hello, "): String {
     return "$greeting $user!"
 }
 
-// This annotation must be added to types that want to be passed
-// around in exported functions. You can also register a custom
-// JSON adapter for the type in runKonoApplication's builder
-// using `moshi(...)`.
-//
-// The class does not need to be a data class
+/**
+ * An example of a complex data type. Note that it must be serializable.
+ *
+ * See [Serializers](https://github.com/Kotlin/kotlinx.serialization/blob/master/docs/serializers.md).
+ */
 @Serializable
 data class Greeting(
     val user: String,
